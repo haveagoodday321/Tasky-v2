@@ -418,3 +418,244 @@ showToast(
 refreshApp();
 
 }
+
+/* ======================================
+   TASKY V2
+   tasks.js
+   Part 3
+====================================== */
+
+// -------------------------------
+// Search Tasks
+// -------------------------------
+
+function searchTasks() {
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    if (!searchInput) return;
+
+    const keyword =
+        searchInput.value.toLowerCase().trim();
+
+    const cards =
+        document.querySelectorAll(".task-card");
+
+    cards.forEach(card => {
+
+        const title =
+            card.querySelector(".task-title")
+                .textContent
+                .toLowerCase();
+
+        if (title.includes(keyword)) {
+
+            card.style.display = "flex";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+}
+
+// -------------------------------
+// Today's Focus
+// -------------------------------
+
+function updateFocusList() {
+
+    const focusList =
+        document.getElementById("focusList");
+
+    if (!focusList) return;
+
+    focusList.innerHTML = "";
+
+    const focusTasks = tasks
+        .filter(task => !task.completed)
+        .sort((a, b) => {
+
+            const order = {
+                High: 3,
+                Medium: 2,
+                Low: 1
+            };
+
+            return order[b.priority] - order[a.priority];
+
+        })
+        .slice(0, 3);
+
+    if (focusTasks.length === 0) {
+
+        focusList.innerHTML =
+            "<li>No tasks for today 🎉</li>";
+
+        return;
+
+    }
+
+    focusTasks.forEach(task => {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent =
+            "🎯 " + task.text;
+
+        focusList.appendChild(li);
+
+    });
+
+}
+
+// -------------------------------
+// Upcoming Deadlines
+// -------------------------------
+
+function updateUpcomingList() {
+
+    const upcoming =
+        document.getElementById("upcomingList");
+
+    if (!upcoming) return;
+
+    upcoming.innerHTML = "";
+
+    const upcomingTasks = tasks
+
+        .filter(task =>
+            task.deadline !== "" &&
+            !task.completed
+        )
+
+        .sort((a, b) =>
+            new Date(a.deadline) -
+            new Date(b.deadline)
+        )
+
+        .slice(0, 3);
+
+    if (upcomingTasks.length === 0) {
+
+        upcoming.innerHTML =
+            "<li>No upcoming deadlines</li>";
+
+        return;
+
+    }
+
+    upcomingTasks.forEach(task => {
+
+        const li =
+            document.createElement("li");
+
+        li.innerHTML =
+            `📅 ${task.deadline}<br>${task.text}`;
+
+        upcoming.appendChild(li);
+
+    });
+
+}
+
+// -------------------------------
+// Task Counter
+// -------------------------------
+
+function updateTaskCount() {
+
+    const counter =
+        document.getElementById(
+            "completedTasks"
+        );
+
+    if (!counter) return;
+
+    const completed =
+        tasks.filter(
+            task => task.completed
+        ).length;
+
+    counter.textContent =
+        completed;
+
+}
+
+// -------------------------------
+// Dashboard Progress
+// -------------------------------
+
+function updateProgress() {
+
+    const fill =
+        document.getElementById(
+            "progressFill"
+        );
+
+    const text =
+        document.getElementById(
+            "progressText"
+        );
+
+    if (!fill || !text) return;
+
+    if (tasks.length === 0) {
+
+        fill.style.width = "0%";
+
+        text.textContent = "0%";
+
+        return;
+
+    }
+
+    const completed =
+        tasks.filter(
+            task => task.completed
+        ).length;
+
+    const percent =
+        Math.round(
+            completed /
+            tasks.length *
+            100
+        );
+
+    fill.style.width =
+        percent + "%";
+
+    text.textContent =
+        percent + "%";
+
+}
+
+// -------------------------------
+// Search Listener
+// -------------------------------
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const search =
+            document.getElementById(
+                "searchInput"
+            );
+
+        if (search) {
+
+            search.addEventListener(
+                "input",
+                searchTasks
+            );
+
+        }
+
+    }
+);
