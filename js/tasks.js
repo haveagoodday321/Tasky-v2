@@ -659,3 +659,229 @@ document.addEventListener(
 
     }
 );
+
+/* ======================================
+   TASKY V2
+   tasks.js
+   Part 4
+====================================== */
+
+// -------------------------------
+// Dashboard Refresh
+// -------------------------------
+
+function updateDashboard() {
+
+    updateProgress();
+    updateTaskCount();
+    updateFocusList();
+    updateUpcomingList();
+
+}
+
+// -------------------------------
+// Analytics
+// -------------------------------
+
+function updateAnalytics() {
+
+    const completed =
+        tasks.filter(
+            task => task.completed
+        ).length;
+
+    const analyticsFill =
+        document.getElementById(
+            "analyticsFill"
+        );
+
+    const analyticsPercent =
+        document.getElementById(
+            "analyticsPercent"
+        );
+
+    if (!analyticsFill || !analyticsPercent)
+        return;
+
+    let percent = 0;
+
+    if (tasks.length > 0) {
+
+        percent = Math.round(
+            completed /
+            tasks.length *
+            100
+        );
+
+    }
+
+    analyticsFill.style.width =
+        percent + "%";
+
+    analyticsPercent.textContent =
+        percent + "%";
+
+}
+
+// -------------------------------
+// Refresh Everything
+// -------------------------------
+
+function refreshApp() {
+
+    renderTasks();
+
+    updateDashboard();
+
+    updateAnalytics();
+
+}
+
+// -------------------------------
+// Clear Completed Tasks
+// -------------------------------
+
+function clearCompletedTasks() {
+
+    const completed =
+        tasks.filter(
+            task => task.completed
+        ).length;
+
+    if (completed === 0) {
+
+        showToast(
+            "No completed tasks."
+        );
+
+        return;
+
+    }
+
+    const confirmDelete =
+        confirm(
+            `Delete ${completed} completed task(s)?`
+        );
+
+    if (!confirmDelete)
+        return;
+
+    tasks =
+        tasks.filter(
+            task => !task.completed
+        );
+
+    saveTasks();
+
+    refreshApp();
+
+    showToast(
+        "Completed tasks removed."
+    );
+
+}
+
+// -------------------------------
+// Sort By Priority
+// -------------------------------
+
+function sortByPriority() {
+
+    const order = {
+
+        High: 3,
+        Medium: 2,
+        Low: 1
+
+    };
+
+    tasks.sort((a, b) => {
+
+        return (
+            order[b.priority] -
+            order[a.priority]
+        );
+
+    });
+
+    saveTasks();
+
+    renderTasks();
+
+}
+
+// -------------------------------
+// Sort By Deadline
+// -------------------------------
+
+function sortByDeadline() {
+
+    tasks.sort((a, b) => {
+
+        if (a.deadline === "")
+            return 1;
+
+        if (b.deadline === "")
+            return -1;
+
+        return (
+            new Date(a.deadline) -
+            new Date(b.deadline)
+        );
+
+    });
+
+    saveTasks();
+
+    renderTasks();
+
+}
+
+// -------------------------------
+// Statistics
+// -------------------------------
+
+function getTotalTasks() {
+
+    return tasks.length;
+
+}
+
+function getCompletedTasks() {
+
+    return tasks.filter(
+        task => task.completed
+    ).length;
+
+}
+
+function getPendingTasks() {
+
+    return tasks.filter(
+        task => !task.completed
+    ).length;
+
+}
+
+// -------------------------------
+// Initialize Tasks
+// -------------------------------
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        loadTasks();
+
+        renderTasks();
+
+        updateDashboard();
+
+        updateAnalytics();
+
+        console.log(
+            "✅ Tasks Module Loaded"
+        );
+
+    }
+);
