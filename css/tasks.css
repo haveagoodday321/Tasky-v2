@@ -1,1 +1,161 @@
+/* ===============================
+   TASKS PAGE
+================================= */
 
+#tasksPage{
+    animation:fade .3s ease;
+}
+
+#taskList{
+    list-style:none;
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.task-card{
+
+    background:var(--surface);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:var(--shadow);
+
+    transition:.25s;
+
+}
+
+.task-card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.task-info{
+
+    flex:1;
+
+}
+
+.task-title{
+
+    font-size:18px;
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+}
+
+.task-title.completed{
+
+    text-decoration:line-through;
+
+    opacity:.6;
+
+}
+
+.task-meta{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-top:8px;
+
+}
+
+.priority{
+
+    padding:5px 10px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    color:white;
+
+}
+
+.priority.low{
+
+    background:#22C55E;
+
+}
+
+.priority.medium{
+
+    background:#F59E0B;
+
+}
+
+.priority.high{
+
+    background:#EF4444;
+
+}
+
+.deadline{
+
+    color:var(--text-secondary);
+
+    font-size:13px;
+
+}
+
+.task-buttons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+.task-buttons button{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:12px;
+
+    font-size:18px;
+
+    padding:0;
+
+}
+
+.empty-state{
+
+    text-align:center;
+
+    color:var(--text-secondary);
+
+    padding:40px;
+
+    border:2px dashed var(--border);
+
+    border-radius:18px;
+
+}
+
+.search-box{
+
+    margin-bottom:15px;
+
+}
