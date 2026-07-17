@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Tasky</title>
+
+    <link rel="manifest" href="manifest.json">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/tasks.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/analytics.css">
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+<div class="logo">
+
+<h1>Tasky</h1>
+
+<p>Your Personal Productivity Assistant</p>
+
+</div>
+
+<button id="themeBtn">
+
+🌙
+
+</button>
+
+</header>
+
+<!-- ========================= -->
+<!-- Dashboard -->
+<!-- ========================= -->
+
+<section
+id="dashboardPage"
+class="page active">
+
+<div class="card welcome-card">
+
+<h2>
+
+👋 Welcome Back
+
+</h2>
+
+<p id="todayDate"></p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+🔥 Streak
+
+</h3>
+
+<h1 id="streak">
+
+0 Days
+
+</h1>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+📈 Today's Progress
+
+</h3>
+
+<div class="progress">
+
+<div id="progressFill">
+
+</div>
+
+</div>
+
+<p id="progressText">
+
+0%
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+🎯 Today's Focus
+
+</h3>
+
+<ul id="focusList">
+
+<li>
+
+Nothing planned yet.
+
+</li>
+
+</ul>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⏰ Upcoming Deadlines
+
+</h3>
+
+<ul id="upcomingList">
+
+<li>
+
+No upcoming deadlines.
+
+</li>
+
+</ul>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⚡ Quick Add Task
+
+</h3>
+
+<input
+id="quickTaskInput"
+type="text"
+placeholder="Enter a task...">
+
+<button id="quickAddBtn">
+
+Add Task
+
+</button>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Tasks -->
+<!-- ========================= -->
+
+<section
+id="tasksPage"
+class="page">
+
+<h2>
+
+Tasks
+
+</h2>
+
+<div class="card">
+
+<input
+id="taskInput"
+type="text"
+placeholder="Task name">
+
+<input
+id="deadline"
+type="date">
+
+<select
+id="priority">
+
+<option>
+
+Low
+
+</option>
+
+<option selected>
+
+Medium
+
+</option>
+
+<option>
+
+High
+
+</option>
+
+</select>
+
+<button id="addTaskBtn">
+
+Add Task
+
+</button>
+
+</div>
+
+<div class="card">
+
+<input
+id="searchInput"
+type="text"
+placeholder="Search Tasks...">
+
+</div>
+
+<ul id="taskList">
+
+</ul>
+
+</section>
