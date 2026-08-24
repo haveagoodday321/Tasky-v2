@@ -21,20 +21,7 @@
     <link rel="stylesheet" href="css/premium.css">
     <link rel="stylesheet" href="css/animations.css">
 
-</head>
-
-<script src="js/utils.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/tasks.js"></script>
-<script src="js/calendar.js"></script>
-<script src="js/analytics.js"></script>
-<script src="js/achievements.js"></script>
-<script src="js/notifications.js"></script>
-<script src="js/theme.js"></script>
-<script src="js/settings.js"></script>
-<script src="js/premium.js"></script>
-<script src="js/sections.js"></script>
-<script src="js/app.js"></script>
+<head>
 
 <body>
 
@@ -251,3 +238,390 @@ placeholder="Search Tasks...">
 </ul>
 
 </section>
+
+<!-- ========================= -->
+<!-- Calendar -->
+<!-- ========================= -->
+
+<section
+id="calendarPage"
+class="page">
+
+    <div class="page-header">
+
+        <h2>
+            📅 Calendar
+        </h2>
+
+    </div>
+
+    <div class="card calendar-card">
+
+        <div class="calendar-header">
+
+            <button
+            id="prevMonthBtn"
+            type="button"
+            aria-label="Previous month">
+
+                ←
+
+            </button>
+
+            <h3 id="calendarMonth">
+
+                Loading...
+
+            </h3>
+
+            <button
+            id="nextMonthBtn"
+            type="button"
+            aria-label="Next month">
+
+                →
+
+            </button>
+
+        </div>
+
+        <div class="calendar-weekdays">
+
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+
+        </div>
+
+        <div
+        id="calendar"
+        class="calendar-grid">
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Tasks for Selected Day
+        </h3>
+
+        <ul id="selectedDateTasks">
+
+            <li>
+                Select a date to view tasks.
+            </li>
+
+        </ul>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Analytics -->
+<!-- ========================= -->
+
+<section
+id="analyticsPage"
+class="page">
+
+    <div class="page-header">
+
+        <h2>
+            📊 Analytics
+        </h2>
+
+        <p>
+            See your productivity progress.
+        </p>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="card stat-card">
+
+            <h3>
+                Total Tasks
+            </h3>
+
+            <p
+            id="totalTasksStat"
+            class="stat-number">
+
+                0
+
+            </p>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <h3>
+                Completed
+            </h3>
+
+            <p
+            id="completedTasksStat"
+            class="stat-number">
+
+                0
+
+            </p>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <h3>
+                Pending
+            </h3>
+
+            <p
+            id="pendingTasksStat"
+            class="stat-number">
+
+                0
+
+            </p>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <h3>
+                Completion Rate
+            </h3>
+
+            <p
+            id="completionRateStat"
+            class="stat-number">
+
+                0%
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Weekly Progress
+        </h3>
+
+        <p id="weeklySummary">
+
+            Complete tasks to start seeing your progress.
+
+        </p>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- Settings -->
+<!-- ========================= -->
+
+<section
+id="settingsPage"
+class="page">
+
+    <div class="page-header">
+
+        <h2>
+            ⚙️ Settings
+        </h2>
+
+        <p>
+            Customize your Tasky experience.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Appearance
+        </h3>
+
+        <p>
+            Switch between light and dark mode.
+        </p>
+
+        <button
+        id="settingsThemeBtn"
+        type="button">
+
+            🌙 Toggle Theme
+
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            Your Data
+        </h3>
+
+        <p>
+            Export or reset your locally saved data.
+        </p>
+
+        <button
+        id="exportBtn"
+        type="button">
+
+            📤 Export Backup
+
+        </button>
+
+        <button
+        id="resetAppBtn"
+        type="button"
+        class="danger-btn">
+
+            🗑️ Reset Tasky
+
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <h3>
+            About Tasky
+        </h3>
+
+        <p>
+            Tasky v2.0.0
+        </p>
+
+        <p>
+            Your Personal Productivity Assistant
+        </p>
+
+    </div>
+
+</section>
+
+</div>
+
+<!-- ========================= -->
+<!-- Bottom Navigation -->
+<!-- ========================= -->
+
+<nav
+class="bottom-nav"
+aria-label="Main navigation">
+
+    <button
+    class="navBtn active"
+    type="button"
+    data-page="dashboardPage">
+
+        <span class="nav-icon">
+            🏠
+        </span>
+
+        <span class="nav-label">
+            Home
+        </span>
+
+    </button>
+
+    <button
+    class="navBtn"
+    type="button"
+    data-page="tasksPage">
+
+        <span class="nav-icon">
+            📝
+        </span>
+
+        <span class="nav-label">
+            Tasks
+        </span>
+
+    </button>
+
+    <button
+    class="navBtn"
+    type="button"
+    data-page="calendarPage">
+
+        <span class="nav-icon">
+            📅
+        </span>
+
+        <span class="nav-label">
+            Calendar
+        </span>
+
+    </button>
+
+    <button
+    class="navBtn"
+    type="button"
+    data-page="analyticsPage">
+
+        <span class="nav-icon">
+            📊
+        </span>
+
+        <span class="nav-label">
+            Stats
+        </span>
+
+    </button>
+
+    <button
+    class="navBtn"
+    type="button"
+    data-page="settingsPage">
+
+        <span class="nav-icon">
+            ⚙️
+        </span>
+
+        <span class="nav-label">
+            Settings
+        </span>
+
+    </button>
+
+</nav>
+
+<!-- ========================= -->
+<!-- JavaScript -->
+<!-- ========================= -->
+
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+
+<script src="js/tasks.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/analytics.js"></script>
+
+<script src="js/achievements.js"></script>
+<script src="js/notifications.js"></script>
+
+<script src="js/theme.js"></script>
+<script src="js/settings.js"></script>
+
+<script src="js/premium.js"></script>
+<script src="js/sections.js"></script>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
