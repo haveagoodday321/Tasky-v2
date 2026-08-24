@@ -116,12 +116,7 @@ function setupTheme() {
 
     const headerThemeButton =
         document.getElementById("themeBtn");
-
-    const settingsThemeButton =
-        document.getElementById(
-            "settingsThemeBtn"
-        );
-
+   
 
     if (headerThemeButton) {
 
@@ -132,19 +127,7 @@ function setupTheme() {
 
     }
 
-
-    if (settingsThemeButton) {
-
-        settingsThemeButton.addEventListener(
-            "click",
-            toggleTheme
-        );
-
-    }
-
 }
-
-
 /* ======================================
    INITIALIZE THEME
 ====================================== */
