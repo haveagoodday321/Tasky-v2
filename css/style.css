@@ -479,4 +479,85 @@ font-size:14px;
 
 }
 
-  }
+/* ===========================
+   FORCE LIGHT THEME STYLES
+=========================== */
+
+body.light-theme{
+    background:#F8FAFC;
+    color:#111827;
+}
+
+/* Main app */
+body.light-theme .app{
+    background:#F8FAFC;
+    color:#111827;
+}
+
+/* Cards */
+body.light-theme .card{
+    background:#FFFFFF;
+    color:#111827;
+    border:1px solid #E2E8F0;
+}
+
+/* Headings */
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4{
+    color:#111827;
+}
+
+/* Normal text */
+body.light-theme p{
+    color:#475569;
+}
+
+/* Inputs */
+body.light-theme input,
+body.light-theme select{
+    background:#F1F5F9;
+    color:#111827;
+    border:1px solid #CBD5E1;
+}
+
+/* Task list items */
+body.light-theme li{
+    background:#F1F5F9;
+    color:#111827;
+}
+
+/* Calendar days */
+body.light-theme .day{
+    background:#F1F5F9;
+    color:#111827;
+}
+
+/* Theme button */
+body.light-theme #themeBtn{
+    background:#FFFFFF;
+    color:#111827;
+    border:1px solid #E2E8F0;
+}
+
+/* Bottom navigation */
+body.light-theme nav{
+    background:rgba(255,255,255,.96);
+    border-top:1px solid #CBD5E1;
+}
+
+/* Navigation buttons */
+body.light-theme .navBtn{
+    color:#64748B;
+}
+
+body.light-theme .navBtn.active{
+    color:#111827;
+}
+
+/* Progress background */
+body.light-theme .progress{
+    background:#E2E8F0;
+}
+   }
