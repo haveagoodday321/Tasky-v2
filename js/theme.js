@@ -1,44 +1,161 @@
-/* ============================
+/* ======================================
+   TASKY V2
    theme.js
-============================ */
+   Theme Management System
+====================================== */
 
-function toggleTheme() {
 
-    document.body.classList.toggle("light");
-
-    const mode =
-        document.body.classList.contains("light")
-        ? "light"
-        : "dark";
-
-    save("theme", mode);
-
-}
+/* ======================================
+   LOAD SAVED THEME
+====================================== */
 
 function loadTheme() {
 
-    const theme =
-        load("theme", "dark");
+    const savedTheme =
+        localStorage.getItem("taskyTheme");
 
-    if (theme === "light") {
 
-        document.body.classList.add("light");
+    if (savedTheme === "light") {
+
+        document.body.classList.add(
+            "light-theme"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "light-theme"
+        );
+
+    }
+
+
+    updateThemeButtons();
+
+}
+
+
+/* ======================================
+   TOGGLE THEME
+====================================== */
+
+function toggleTheme() {
+
+    document.body.classList.toggle(
+        "light-theme"
+    );
+
+
+    const currentTheme =
+        document.body.classList.contains(
+            "light-theme"
+        )
+            ? "light"
+            : "dark";
+
+
+    localStorage.setItem(
+        "taskyTheme",
+        currentTheme
+    );
+
+
+    updateThemeButtons();
+
+}
+
+
+/* ======================================
+   UPDATE BUTTONS
+====================================== */
+
+function updateThemeButtons() {
+
+    const isLight =
+        document.body.classList.contains(
+            "light-theme"
+        );
+
+
+    const headerThemeButton =
+        document.getElementById("themeBtn");
+
+    const settingsThemeButton =
+        document.getElementById(
+            "settingsThemeBtn"
+        );
+
+
+    if (headerThemeButton) {
+
+        headerThemeButton.textContent =
+            isLight
+                ? "🌙"
+                : "☀️";
+
+    }
+
+
+    if (settingsThemeButton) {
+
+        settingsThemeButton.textContent =
+            isLight
+                ? "🌙 Switch to Dark Mode"
+                : "☀️ Switch to Light Mode";
 
     }
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    loadTheme();
+/* ======================================
+   SETUP THEME BUTTONS
+====================================== */
 
-    const btn =
+function setupTheme() {
+
+    const headerThemeButton =
         document.getElementById("themeBtn");
 
-    if (btn) {
+    const settingsThemeButton =
+        document.getElementById(
+            "settingsThemeBtn"
+        );
 
-        btn.addEventListener("click", toggleTheme);
+
+    if (headerThemeButton) {
+
+        headerThemeButton.addEventListener(
+            "click",
+            toggleTheme
+        );
 
     }
 
-});
+
+    if (settingsThemeButton) {
+
+        settingsThemeButton.addEventListener(
+            "click",
+            toggleTheme
+        );
+
+    }
+
+}
+
+
+/* ======================================
+   INITIALIZE THEME
+====================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        loadTheme();
+
+        setupTheme();
+
+    }
+);
