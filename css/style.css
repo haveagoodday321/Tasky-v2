@@ -111,7 +111,7 @@ border-radius:50%;
 
 background:var(--surface);
 
-color:white;
+color:var(--text);
 
 font-size:22px;
 
@@ -201,7 +201,7 @@ border-radius:12px;
 
 background:var(--surface2);
 
-color:white;
+color:var(--text);
 
 font-size:15px;
 
@@ -381,7 +381,7 @@ justify-content:space-around;
 
 padding:12px;
 
-background:rgba(15,23,42,.95);
+background:var(--surface);
 
 backdrop-filter:blur(15px);
 
@@ -406,30 +406,28 @@ padding:10px;
 }
 
 .navBtn.active{
-
-color:white;
-
-transform:scale(1.15);
-
+    color:var(--text);
+    transform:scale(1.15);
 }
 
+/ ===========================
 /* ===========================
 LIGHT THEME
 =========================== */
 
-body.light{
+body.light-theme{
 
---bg:#F1F5F9;
+    --bg:#F1F5F9;
 
---surface:#FFFFFF;
+    --surface:#FFFFFF;
 
---surface2:#E2E8F0;
+    --surface2:#E2E8F0;
 
---text:#111827;
+    --text:#111827;
 
---text-secondary:#475569;
+    --text-secondary:#475569;
 
---border:#CBD5E1;
+    --border:#CBD5E1;
 
 }
 
