@@ -4,84 +4,36 @@
    Main Application Controller
 ====================================== */
 
-// Wait until page loads
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeApp
+);
 
-    initializeApp();
 
-});
-
-// -------------------------------
-// Initialize App
-// -------------------------------
+/* ======================================
+   APP INITIALIZATION
+====================================== */
 
 function initializeApp() {
+
+    console.log("🚀 Starting Tasky...");
 
     showTodayDate();
 
     setupNavigation();
 
-    setupThemeButton();
+    refreshApp();
 
-    loadDashboard();
-
-    console.log("✅ Tasky v2 Loaded");
-
-}
-
-// -------------------------------
-// Dashboard
-// -------------------------------
-
-function loadDashboard() {
-
-    if (typeof renderTasks === "function") {
-        renderTasks();
-    }
-
-    if (typeof buildCalendar === "function") {
-        buildCalendar();
-    }
-
-    if (typeof updateAnalytics === "function") {
-        updateAnalytics();
-    }
+    console.log(
+        "✅ Tasky v2 Loaded Successfully"
+    );
 
 }
 
-// -------------------------------
-// Today's Date
-// -------------------------------
 
-function showTodayDate() {
-
-    const today = new Date();
-
-    const options = {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    };
-
-    const dateElement =
-        document.getElementById("todayDate");
-
-    if (dateElement) {
-
-        dateElement.textContent =
-            today.toLocaleDateString(
-                "en-US",
-                options
-            );
-
-    }
-
-}
-
-// -------------------------------
-// Bottom Navigation
-// -------------------------------
+/* ======================================
+   NAVIGATION
+====================================== */
 
 function setupNavigation() {
 
@@ -91,101 +43,171 @@ function setupNavigation() {
     const pages =
         document.querySelectorAll(".page");
 
-    buttons.forEach(button => {
+    if (!buttons.length || !pages.length) {
 
-        button.addEventListener("click", () => {
+        console.warn(
+            "Navigation buttons or pages were not found."
+        );
 
-            // Remove active button
-            buttons.forEach(btn =>
-                btn.classList.remove("active")
-            );
-
-            button.classList.add("active");
-
-            // Hide pages
-            pages.forEach(page =>
-                page.classList.remove("active")
-            );
-
-            // Show selected page
-            const page =
-                document.getElementById(
-                    button.dataset.page
-                );
-
-            if (page) {
-
-                page.classList.add("active");
-
-            }
-
-        });
-
-    });
-
-}
-
-// -------------------------------
-// Theme
-// -------------------------------
-
-function setupThemeButton() {
-
-    const themeButton =
-        document.getElementById("themeBtn");
-
-    if (!themeButton) return;
-
-    // Load saved theme
-    const savedTheme =
-        localStorage.getItem("theme");
-
-    if (savedTheme === "light") {
-
-        document.body.classList.add("light");
-
-        themeButton.textContent = "☀️";
+        return;
 
     }
 
-    themeButton.addEventListener("click", () => {
+    buttons.forEach(button => {
 
-        document.body.classList.toggle("light");
+        button.addEventListener(
+            "click",
+            () => {
 
-        if (
-            document.body.classList.contains("light")
-        ) {
+                const pageId =
+                    button.dataset.page;
 
-            localStorage.setItem(
-                "theme",
-                "light"
-            );
+                showPage(pageId);
 
-            themeButton.textContent = "☀️";
-
-        } else {
-
-            localStorage.setItem(
-                "theme",
-                "dark"
-            );
-
-            themeButton.textContent = "🌙";
-
-        }
+            }
+        );
 
     });
 
 }
 
-// -------------------------------
-// Notifications
-// -------------------------------
+
+function showPage(pageId) {
+
+    const buttons =
+        document.querySelectorAll(".navBtn");
+
+    const pages =
+        document.querySelectorAll(".page");
+
+    const targetPage =
+        document.getElementById(pageId);
+
+    if (!targetPage) {
+
+        console.error(
+            `Page "${pageId}" was not found.`
+        );
+
+        return;
+
+    }
+
+
+    /* Hide all pages */
+
+    pages.forEach(page => {
+
+        page.classList.remove("active");
+
+    });
+
+
+    /* Show selected page */
+
+    targetPage.classList.add("active");
+
+
+    /* Update navigation */
+
+    buttons.forEach(button => {
+
+        button.classList.toggle(
+            "active",
+            button.dataset.page === pageId
+        );
+
+    });
+
+
+    /* Refresh the selected page */
+
+    updateCurrentPage(pageId);
+
+}
+
+
+/* ======================================
+   PAGE UPDATES
+====================================== */
+
+function updateCurrentPage(pageId) {
+
+    if (
+        pageId === "tasksPage" &&
+        typeof renderTasks === "function"
+    ) {
+
+        renderTasks();
+
+    }
+
+
+    if (
+        pageId === "calendarPage" &&
+        typeof buildCalendar === "function"
+    ) {
+
+        buildCalendar();
+
+    }
+
+
+    if (
+        pageId === "analyticsPage" &&
+        typeof updateAnalytics === "function"
+    ) {
+
+        updateAnalytics();
+
+    }
+
+}
+
+
+/* ======================================
+   TODAY'S DATE
+====================================== */
+
+function showTodayDate() {
+
+    const dateElement =
+        document.getElementById("todayDate");
+
+    if (!dateElement) return;
+
+
+    const today =
+        new Date();
+
+    const options = {
+
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+
+    };
+
+
+    dateElement.textContent =
+        today.toLocaleDateString(
+            "en-US",
+            options
+        );
+
+}
+
+
+/* ======================================
+   TOAST MESSAGES
+====================================== */
 
 function showToast(message) {
 
     let toast =
         document.getElementById("toast");
+
 
     if (!toast) {
 
@@ -194,75 +216,56 @@ function showToast(message) {
 
         toast.id = "toast";
 
-        toast.style.position = "fixed";
-        toast.style.bottom = "90px";
-        toast.style.left = "50%";
-        toast.style.transform =
-            "translateX(-50%)";
-
-        toast.style.background =
-            "#22C55E";
-
-        toast.style.color =
-            "white";
-
-        toast.style.padding =
-            "12px 20px";
-
-        toast.style.borderRadius =
-            "12px";
-
-        toast.style.zIndex =
-            "9999";
-
         document.body.appendChild(toast);
 
     }
 
-    toast.textContent = message;
 
-    toast.style.display = "block";
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
 
     setTimeout(() => {
 
-        toast.style.display = "none";
+        toast.classList.remove("show");
 
     }, 2500);
 
 }
 
-// -------------------------------
-// Refresh Everything
-// -------------------------------
+
+/* ======================================
+   REFRESH APP
+====================================== */
 
 function refreshApp() {
 
-    if (typeof renderTasks === "function") {
+    if (
+        typeof renderTasks === "function"
+    ) {
 
         renderTasks();
 
     }
 
-    if (typeof updateAnalytics === "function") {
 
-        updateAnalytics();
-
-    }
-
-    if (typeof buildCalendar === "function") {
+    if (
+        typeof buildCalendar === "function"
+    ) {
 
         buildCalendar();
 
     }
 
-}
 
-// -------------------------------
-// Utility
-// -------------------------------
+    if (
+        typeof updateAnalytics === "function"
+    ) {
 
-function $(id) {
+        updateAnalytics();
 
-    return document.getElementById(id);
+    }
 
-                                 }
+       }
