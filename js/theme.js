@@ -118,12 +118,6 @@ function setupTheme() {
         document.getElementById("themeBtn");
 
 
-    const settingsThemeButton =
-        document.getElementById(
-            "settingsThemeBtn"
-        );
-
-
     if (headerThemeButton) {
 
         headerThemeButton.addEventListener(
@@ -133,15 +127,6 @@ function setupTheme() {
 
     }
 
-
-    if (settingsThemeButton) {
-
-        settingsThemeButton.addEventListener(
-            "click",
-            toggleTheme
-        );
-
-    }
 
 }
 
