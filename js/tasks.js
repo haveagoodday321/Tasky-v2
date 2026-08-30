@@ -11,6 +11,14 @@
 
 let tasks = [];
 
+let currentSearch = "";
+
+let currentStatus = "all";
+
+let currentPriority = "all";
+
+let currentSort = "newest";
+
 
 /* ======================================
    LOAD TASKS
@@ -256,6 +264,143 @@ function quickAddTask() {
 
 }
 
+/* ======================================
+   GET FILTERED TASKS
+====================================== */
+
+function getFilteredTasks() {
+
+    let filteredTasks =
+        [...tasks];
+
+
+    /* Search */
+
+    if (currentSearch !== "") {
+
+        filteredTasks =
+            filteredTasks.filter(
+                task =>
+                    task.text
+                        .toLowerCase()
+                        .includes(
+                            currentSearch
+                                .toLowerCase()
+                        )
+            );
+
+    }
+
+
+    /* Status Filter */
+
+    if (currentStatus === "active") {
+
+        filteredTasks =
+            filteredTasks.filter(
+                task =>
+                    !task.completed
+            );
+
+    }
+
+
+    if (currentStatus === "completed") {
+
+        filteredTasks =
+            filteredTasks.filter(
+                task =>
+                    task.completed
+            );
+
+    }
+
+
+    /* Priority Filter */
+
+    if (currentPriority !== "all") {
+
+        filteredTasks =
+            filteredTasks.filter(
+                task =>
+                    task.priority
+                        .toLowerCase()
+                        ===
+                    currentPriority
+            );
+
+    }
+
+
+    /* Sorting */
+
+    if (currentSort === "newest") {
+
+        filteredTasks.sort(
+            (a, b) =>
+                new Date(b.createdAt) -
+                new Date(a.createdAt)
+        );
+
+    }
+
+
+    if (currentSort === "oldest") {
+
+        filteredTasks.sort(
+            (a, b) =>
+                new Date(a.createdAt) -
+                new Date(b.createdAt)
+        );
+
+    }
+
+
+    if (currentSort === "deadline") {
+
+        filteredTasks.sort(
+            (a, b) => {
+
+                if (!a.deadline)
+                    return 1;
+
+                if (!b.deadline)
+                    return -1;
+
+                return (
+                    new Date(a.deadline) -
+                    new Date(b.deadline)
+                );
+
+            }
+        );
+
+    }
+
+
+    if (currentSort === "priority") {
+
+        const priorityOrder = {
+
+            High: 3,
+            Medium: 2,
+            Low: 1
+
+        };
+
+
+        filteredTasks.sort(
+            (a, b) =>
+                priorityOrder[b.priority] -
+                priorityOrder[a.priority]
+        );
+
+    }
+
+
+    return filteredTasks;
+
+}
 
 /* ======================================
    RENDER TASKS
@@ -275,27 +420,28 @@ function renderTasks() {
     taskList.innerHTML = "";
 
 
-    if (tasks.length === 0) {
-
-        taskList.innerHTML = `
-
-            <li class="empty-state">
-
-                📋 No tasks yet.
-                <br>
-
-                Add your first task!
-
-            </li>
-
-        `;
-
-        return;
-
-    }
+    const visibleTasks =
+    getFilteredTasks();
 
 
-    tasks.forEach(task => {
+if (visibleTasks.length === 0) {
+
+    taskList.innerHTML = `
+
+        <li class="empty-state">
+
+            🔍 No tasks match your search
+            or filters.
+
+        </li>
+
+    `;
+
+    return;
+
+}
+
+    visibleTasks.forEach(task => {
 
         const li =
             document.createElement("li");
@@ -708,6 +854,113 @@ function setupTasks() {
         );
 
     }
+   
+   /* ======================================
+   SEARCH
+====================================== */
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
+
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        event => {
+
+            currentSearch =
+                event.target.value;
+
+            renderTasks();
+
+        }
+    );
+
+}
+
+
+/* ======================================
+   STATUS FILTER
+====================================== */
+
+const statusFilter =
+    document.getElementById(
+        "statusFilter"
+    );
+
+
+if (statusFilter) {
+
+    statusFilter.addEventListener(
+        "change",
+        event => {
+
+            currentStatus =
+                event.target.value;
+
+            renderTasks();
+
+        }
+    );
+
+}
+
+
+/* ======================================
+   PRIORITY FILTER
+====================================== */
+
+const priorityFilter =
+    document.getElementById(
+        "priorityFilter"
+    );
+
+
+if (priorityFilter) {
+
+    priorityFilter.addEventListener(
+        "change",
+        event => {
+
+            currentPriority =
+                event.target.value;
+
+            renderTasks();
+
+        }
+    );
+
+}
+
+
+/* ======================================
+   SORT TASKS
+====================================== */
+
+const sortTasks =
+    document.getElementById(
+        "sortTasks"
+    );
+
+
+if (sortTasks) {
+
+    sortTasks.addEventListener(
+        "change",
+        event => {
+
+            currentSort =
+                event.target.value;
+
+            renderTasks();
+
+        }
+    );
+
+}
 
 
     const taskInput =
