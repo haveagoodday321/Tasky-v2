@@ -159,3 +159,46 @@
     margin-bottom:15px;
 
 }
+
+/* ===============================
+   TASK SEARCH, FILTER & SORT
+================================= */
+
+.task-controls{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+
+.filter-row{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:10px;
+
+}
+
+
+.task-controls select{
+
+    margin-top:0;
+
+}
+
+
+@media(max-width:380px){
+
+    .filter-row{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
