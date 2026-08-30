@@ -14,7 +14,6 @@ function loadTheme() {
     const savedTheme =
         localStorage.getItem("taskyTheme");
 
-
     if (savedTheme === "light") {
 
         document.body.classList.add(
@@ -29,7 +28,6 @@ function loadTheme() {
 
     }
 
-
     updateThemeButtons();
 
 }
@@ -41,24 +39,15 @@ function loadTheme() {
 
 function toggleTheme() {
 
-    document.body.classList.toggle(
-        "light-theme"
-    );
-
-
-    const currentTheme =
-        document.body.classList.contains(
+    const isLight =
+        document.body.classList.toggle(
             "light-theme"
-        )
-            ? "light"
-            : "dark";
-
+        );
 
     localStorage.setItem(
         "taskyTheme",
-        currentTheme
+        isLight ? "light" : "dark"
     );
-
 
     updateThemeButtons();
 
@@ -66,7 +55,7 @@ function toggleTheme() {
 
 
 /* ======================================
-   UPDATE BUTTONS
+   UPDATE BUTTON TEXT
 ====================================== */
 
 function updateThemeButtons() {
@@ -75,7 +64,6 @@ function updateThemeButtons() {
         document.body.classList.contains(
             "light-theme"
         );
-
 
     const headerThemeButton =
         document.getElementById("themeBtn");
@@ -89,9 +77,7 @@ function updateThemeButtons() {
     if (headerThemeButton) {
 
         headerThemeButton.textContent =
-            isLight
-                ? "🌙"
-                : "☀️";
+            isLight ? "🌙" : "☀️";
 
     }
 
@@ -117,6 +103,11 @@ function setupTheme() {
     const headerThemeButton =
         document.getElementById("themeBtn");
 
+    const settingsThemeButton =
+        document.getElementById(
+            "settingsThemeBtn"
+        );
+
 
     if (headerThemeButton) {
 
@@ -127,6 +118,15 @@ function setupTheme() {
 
     }
 
+
+    if (settingsThemeButton) {
+
+        settingsThemeButton.addEventListener(
+            "click",
+            toggleTheme
+        );
+
+    }
 
 }
 
