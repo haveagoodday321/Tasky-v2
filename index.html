@@ -226,10 +226,78 @@ Add Task
 
 <div class="card">
 
-<input
-id="searchInput"
-type="text"
-placeholder="Search Tasks...">
+<div class="card task-controls">
+
+    <input
+    id="searchInput"
+    type="text"
+    placeholder="🔍 Search tasks...">
+
+
+    <div class="filter-row">
+
+        <select
+        id="statusFilter">
+
+            <option value="all">
+                All Tasks
+            </option>
+
+            <option value="active">
+                Active
+            </option>
+
+            <option value="completed">
+                Completed
+            </option>
+
+        </select>
+
+
+        <select
+        id="priorityFilter">
+
+            <option value="all">
+                All Priorities
+            </option>
+
+            <option value="high">
+                🔴 High
+            </option>
+
+            <option value="medium">
+                🟠 Medium
+            </option>
+
+            <option value="low">
+                🟢 Low
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <select
+    id="sortTasks">
+
+        <option value="newest">
+            ↕️ Newest First
+        </option>
+
+        <option value="oldest">
+            ↕️ Oldest First
+        </option>
+
+        <option value="deadline">
+            📅 Deadline
+        </option>
+
+        <option value="priority">
+            🔥 Priority
+        </option>
+
+    </select>
 
 </div>
 
