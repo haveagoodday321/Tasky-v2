@@ -268,4 +268,12 @@ function refreshApp() {
 
     }
 
+   if (
+    typeof updateDashboard === "function"
+) {
+
+    updateDashboard();
+
+   }
+
        }
