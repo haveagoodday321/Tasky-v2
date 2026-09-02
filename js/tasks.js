@@ -802,11 +802,13 @@ function deleteTask(id) {
 
     saveTasks();
 
-    renderTasks();
+renderTasks();
 
-    showToast(
-        "🗑️ Task deleted."
-    );
+updateDashboard();
+
+showToast(
+    "🗑️ Task deleted."
+);
 
 }
 
