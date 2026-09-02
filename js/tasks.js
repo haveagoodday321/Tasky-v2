@@ -655,7 +655,9 @@ function completeTask(id) {
 
     saveTasks();
 
-    renderTasks();
+renderTasks();
+
+updateDashboard();
 
 
     showToast(
@@ -670,6 +672,99 @@ function completeTask(id) {
 /* ======================================
    DELETE TASK
 ====================================== */
+
+/* ======================================
+   UPDATE DASHBOARD
+====================================== */
+
+function updateDashboard() {
+
+    const total =
+        tasks.length;
+
+    const completed =
+        tasks.filter(
+            task => task.completed
+        ).length;
+
+
+    const remaining =
+        total - completed;
+
+
+    const percentage =
+        total === 0
+            ? 0
+            : Math.round(
+                (completed / total) * 100
+            );
+
+
+    /* Progress percentage */
+
+    const progressText =
+        document.getElementById(
+            "todayPercent"
+        );
+
+
+    if (progressText) {
+
+        progressText.textContent =
+            `${percentage}%`;
+
+    }
+
+
+    /* Completed count */
+
+    const completedElement =
+        document.getElementById(
+            "completedCount"
+        );
+
+
+    if (completedElement) {
+
+        completedElement.textContent =
+            completed;
+
+    }
+
+
+    /* Remaining count */
+
+    const remainingElement =
+        document.getElementById(
+            "remainingCount"
+        );
+
+
+    if (remainingElement) {
+
+        remainingElement.textContent =
+            remaining;
+
+    }
+
+
+    /* Progress bar */
+
+    const progressBar =
+        document.getElementById(
+            "progressBar"
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${percentage}%`;
+
+    }
+
+}
+
 
 function deleteTask(id) {
 
