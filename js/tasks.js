@@ -206,9 +206,11 @@ function addTask() {
 
     renderTasks();
 
-    showToast(
-        "✅ Task added!"
-    );
+updateDashboard();
+
+showToast(
+    "✅ Task added!"
+);
 
 }
 
@@ -258,9 +260,11 @@ function quickAddTask() {
 
     renderTasks();
 
-    showToast(
-        "✅ Task added!"
-    );
+updateDashboard();
+
+showToast(
+    "✅ Task added!"
+);
 
 }
 
