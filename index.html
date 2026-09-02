@@ -81,25 +81,41 @@ class="page active">
 
 </div>
 
-<div class="card">
+<div class="card dashboard-progress-card">
 
-<h3>
+    <h3>
+        🎯 Today's Progress
+    </h3>
 
-📈 Today's Progress
+    <div class="progress-summary">
 
-</h3>
+        <div class="progress-stat">
+            <strong id="completedCount">0</strong>
+            <span>Completed</span>
+        </div>
 
-<div class="progress">
+        <div class="progress-stat">
+            <strong id="remainingCount">0</strong>
+            <span>Remaining</span>
+        </div>
 
-<div id="progressFill">
+    </div>
+
+    <div class="progress-track">
+
+        <div
+            id="progressBar"
+            class="progress-fill">
+        </div>
+
+    </div>
+
+    <p class="progress-percentage">
+        <strong id="todayPercent">0%</strong>
+        complete
+    </p>
 
 </div>
-
-</div>
-
-<p id="progressText">
-
-0%
 
 </p>
 
