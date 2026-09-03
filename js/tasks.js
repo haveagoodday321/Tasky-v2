@@ -683,28 +683,104 @@ updateDashboard();
 
 function updateDashboard() {
 
-    const total =
-        tasks.length;
-
-    const completed =
-        tasks.filter(
-            task => task.completed
-        ).length;
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
 
 
-    const remaining =
-        total - completed;
+    /*
+       Tasks that are due today
+       OR tasks completed today
+    */
+
+    const todayTasks =
+        tasks.filter(task => {
+
+            const dueToday =
+                task.deadline === today;
+
+            const completedToday =
+                task.completedAt &&
+                task.completedAt.startsWith(today);
+
+            return dueToday || completedToday;
+
+        });
+
+
+    const completedToday =
+        todayTasks.filter(task => {
+
+            return (
+                task.completed &&
+                task.completedAt &&
+                task.completedAt.startsWith(today)
+            );
+
+        }).length;
+
+
+    const remainingToday =
+        todayTasks.filter(task => {
+
+            return !task.completed;
+
+        }).length;
+
+
+    const totalToday =
+        completedToday +
+        remainingToday;
 
 
     const percentage =
-        total === 0
+        totalToday === 0
             ? 0
             : Math.round(
-                (completed / total) * 100
+                (completedToday / totalToday) * 100
             );
 
 
-    /* Progress percentage */
+    /* ==================================
+       COMPLETED COUNT
+    ================================== */
+
+    const completedElement =
+        document.getElementById(
+            "completedCount"
+        );
+
+
+    if (completedElement) {
+
+        completedElement.textContent =
+            completedToday;
+
+    }
+
+
+    /* ==================================
+       REMAINING COUNT
+    ================================== */
+
+    const remainingElement =
+        document.getElementById(
+            "remainingCount"
+        );
+
+
+    if (remainingElement) {
+
+        remainingElement.textContent =
+            remainingToday;
+
+    }
+
+
+    /* ==================================
+       PERCENTAGE
+    ================================== */
 
     const progressText =
         document.getElementById(
@@ -720,39 +796,9 @@ function updateDashboard() {
     }
 
 
-    /* Completed count */
-
-    const completedElement =
-        document.getElementById(
-            "completedCount"
-        );
-
-
-    if (completedElement) {
-
-        completedElement.textContent =
-            completed;
-
-    }
-
-
-    /* Remaining count */
-
-    const remainingElement =
-        document.getElementById(
-            "remainingCount"
-        );
-
-
-    if (remainingElement) {
-
-        remainingElement.textContent =
-            remaining;
-
-    }
-
-
-    /* Progress bar */
+    /* ==================================
+       PROGRESS BAR
+    ================================== */
 
     const progressBar =
         document.getElementById(
@@ -768,7 +814,6 @@ function updateDashboard() {
     }
 
 }
-
 
 function deleteTask(id) {
 
