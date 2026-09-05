@@ -1049,16 +1049,8 @@ function updateDashboard() {
             `${percentage}%`;
 
     }
-       if (progressBar) {
-
-        progressBar.style.width =
-            `${percentage}%`;
-
-    }
 
     updateDashboardLists();
-
-}
 
 }
 
