@@ -200,11 +200,34 @@
 
 .day.today {
 
-    background: var(--accent);
+    background: var(--accent) !important;
 
-    color: white;
+    color: #FFFFFF !important;
+
+    border: 2px solid var(--accent) !important;
 
     font-weight: 700;
+
+    box-shadow:
+        0 0 0 3px rgba(34, 197, 94, 0.20);
+
+}
+
+
+/* ======================================
+   TODAY — LIGHT THEME
+====================================== */
+
+body.light-theme .day.today {
+
+    background: #22C55E !important;
+
+    color: #FFFFFF !important;
+
+    border: 2px solid #16A34A !important;
+
+    box-shadow:
+        0 0 0 3px rgba(34, 197, 94, 0.20);
 
 }
 
@@ -215,11 +238,23 @@
 
 .day.selected {
 
-    border: 2px solid
-        var(--primary);
+    border: 2px solid var(--primary) !important;
+
+    box-shadow:
+        0 0 0 2px rgba(99, 102, 241, 0.18);
 
 }
 
+
+/* ======================================
+   TODAY + SELECTED
+====================================== */
+
+.day.today.selected {
+
+    border: 3px solid var(--primary) !important;
+
+}
 
 /* ======================================
    TASK DAY
