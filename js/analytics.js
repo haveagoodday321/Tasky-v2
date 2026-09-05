@@ -81,17 +81,17 @@ function updateAnalytics() {
 
     const high =
         tasks.filter(
-            task => task.priority === "high"
+            task => task.priority === "High"
         ).length;
 
     const medium =
         tasks.filter(
-            task => task.priority === "medium"
+            task => task.priority === "Medium"
         ).length;
 
     const low =
         tasks.filter(
-            task => task.priority === "low"
+            task => task.priority === "Low"
         ).length;
 
 
