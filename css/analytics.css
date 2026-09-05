@@ -1,1 +1,97 @@
+/* ========================================
+   7-DAY PRODUCTIVITY CHART
+======================================== */
 
+.weekly-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 180px;
+    padding: 20px 10px 10px;
+}
+
+.weekly-chart-day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    min-width: 0;
+}
+
+.weekly-chart-bar {
+    width: 100%;
+    max-width: 42px;
+    min-height: 5px;
+    background: linear-gradient(
+        180deg,
+        var(--primary),
+        var(--secondary)
+    );
+    border-radius: 10px 10px 4px 4px;
+    transition:
+        height 0.3s ease,
+        transform 0.2s ease;
+}
+
+.weekly-chart-bar:hover {
+    transform: scaleY(1.05);
+}
+
+.weekly-chart-day strong {
+    font-size: 14px;
+    color: var(--text);
+}
+
+.weekly-chart-day span {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.analytics-empty {
+    width: 100%;
+    text-align: center;
+    color: var(--text-secondary);
+    margin: auto;
+}
+
+
+/* ========================================
+   LIGHT THEME
+======================================== */
+
+body.light-theme .weekly-chart-day strong {
+    color: var(--text);
+}
+
+body.light-theme .weekly-chart-day span {
+    color: var(--text-secondary);
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+    .weekly-chart {
+        gap: 5px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .weekly-chart-bar {
+        max-width: 30px;
+    }
+
+    .weekly-chart-day span {
+        font-size: 10px;
+    }
+
+    .weekly-chart-day strong {
+        font-size: 12px;
+    }
+}
