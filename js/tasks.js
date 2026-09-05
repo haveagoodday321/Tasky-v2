@@ -1214,7 +1214,9 @@ function setupTasks() {
     updateAnalytics();
 
 
-    /* ADD TASK BUTTON */
+    /* ==================================
+       ADD TASK BUTTON
+    ================================== */
 
     const addButton =
         document.getElementById(
@@ -1233,4 +1235,200 @@ function setupTasks() {
             "❌ addTaskBtn was not found."
         );
 
- 
+    }
+
+
+    /* ==================================
+       QUICK ADD BUTTON
+    ================================== */
+
+    const quickButton =
+        document.getElementById(
+            "quickAddBtn"
+        );
+
+
+    if (quickButton) {
+
+        quickButton.onclick =
+            quickAddTask;
+
+    } else {
+
+        console.warn(
+            "quickAddBtn was not found."
+        );
+
+    }
+
+
+    /* ==================================
+       SEARCH
+    ================================== */
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    if (searchInput) {
+
+        searchInput.oninput =
+            function () {
+
+                currentSearch =
+                    this.value;
+
+                renderTasks();
+
+            };
+
+    }
+
+
+    /* ==================================
+       STATUS FILTER
+    ================================== */
+
+    const statusFilter =
+        document.getElementById(
+            "statusFilter"
+        );
+
+
+    if (statusFilter) {
+
+        statusFilter.onchange =
+            function () {
+
+                currentStatus =
+                    this.value;
+
+                renderTasks();
+
+            };
+
+    }
+
+
+    /* ==================================
+       PRIORITY FILTER
+    ================================== */
+
+    const priorityFilter =
+        document.getElementById(
+            "priorityFilter"
+        );
+
+
+    if (priorityFilter) {
+
+        priorityFilter.onchange =
+            function () {
+
+                currentPriority =
+                    this.value;
+
+                renderTasks();
+
+            };
+
+    }
+
+
+    /* ==================================
+       SORT
+    ================================== */
+
+    const sortSelect =
+        document.getElementById(
+            "sortTasks"
+        );
+
+
+    if (sortSelect) {
+
+        sortSelect.onchange =
+            function () {
+
+                currentSort =
+                    this.value;
+
+                renderTasks();
+
+            };
+
+    }
+
+
+    /* ==================================
+       ENTER KEY — NORMAL TASK
+    ================================== */
+
+    const taskInput =
+        document.getElementById(
+            "taskInput"
+        );
+
+
+    if (taskInput) {
+
+        taskInput.onkeydown =
+            function (event) {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    addTask();
+
+                }
+
+            };
+
+    }
+
+
+    /* ==================================
+       ENTER KEY — QUICK ADD
+    ================================== */
+
+    const quickInput =
+        document.getElementById(
+            "quickTaskInput"
+        );
+
+
+    if (quickInput) {
+
+        quickInput.onkeydown =
+            function (event) {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    quickAddTask();
+
+                }
+
+            };
+
+    }
+
+}
+
+
+/* ======================================
+   START TASK SYSTEM
+====================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    setupTasks
+);
