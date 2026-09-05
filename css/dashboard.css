@@ -124,3 +124,132 @@ body.light-theme .progress-track {
     }
 
 }
+
+/* ======================================
+   DASHBOARD TASK LISTS
+====================================== */
+
+.dashboard-progress-card {
+    overflow: hidden;
+}
+
+
+/* ======================================
+   FOCUS & DEADLINES
+====================================== */
+
+#focusList,
+#upcomingList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+#focusList li,
+#upcomingList li {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 12px 14px;
+
+    margin-bottom: 8px;
+
+    background: var(--surface2);
+
+    border-radius: 12px;
+
+    border-left: 4px solid transparent;
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+
+}
+
+
+#focusList li:hover,
+#upcomingList li:hover {
+
+    transform: translateX(3px);
+
+}
+
+
+/* ======================================
+   PRIORITY INDICATORS
+====================================== */
+
+#focusList .priority-high,
+#upcomingList .priority-high {
+
+    border-left-color: #EF4444;
+
+}
+
+
+#focusList .priority-medium,
+#upcomingList .priority-medium {
+
+    border-left-color: #F59E0B;
+
+}
+
+
+#focusList .priority-low,
+#upcomingList .priority-low {
+
+    border-left-color: #22C55E;
+
+}
+
+
+/* ======================================
+   DEADLINE TEXT
+====================================== */
+
+.dashboard-deadline {
+
+    font-size: 12px;
+
+    color: var(--text-secondary);
+
+    white-space: nowrap;
+
+}
+
+
+/* ======================================
+   LIGHT THEME
+====================================== */
+
+body.light-theme #focusList li,
+body.light-theme #upcomingList li {
+
+    background: #F1F5F9;
+
+}
+
+
+/* ======================================
+   MOBILE
+====================================== */
+
+@media (max-width: 380px) {
+
+    #focusList li,
+    #upcomingList li {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+}
