@@ -672,6 +672,243 @@ updateDashboard();
 
 }
 
+/* ======================================
+   DASHBOARD TASK LISTS
+====================================== */
+
+function updateDashboardLists() {
+
+    const focusList =
+        document.getElementById("focusList");
+
+    const upcomingList =
+        document.getElementById("upcomingList");
+
+
+    if (!focusList && !upcomingList) {
+        return;
+    }
+
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    /* ==================================
+       TODAY'S FOCUS
+    ================================== */
+
+    if (focusList) {
+
+        focusList.innerHTML = "";
+
+
+        const todayTasks =
+            tasks
+                .filter(task => {
+
+                    if (task.completed) {
+                        return false;
+                    }
+
+                    if (!task.deadline) {
+                        return false;
+                    }
+
+
+                    const deadline =
+                        new Date(
+                            task.deadline
+                        );
+
+                    deadline.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+
+
+                    return (
+                        deadline.getTime() ===
+                        today.getTime()
+                    );
+
+                })
+                .sort((a, b) => {
+
+                    const priorityOrder = {
+                        high: 3,
+                        medium: 2,
+                        low: 1
+                    };
+
+                    return (
+                        (priorityOrder[b.priority] || 0) -
+                        (priorityOrder[a.priority] || 0)
+                    );
+
+                });
+
+
+        if (todayTasks.length === 0) {
+
+            const empty =
+                document.createElement("li");
+
+            empty.textContent =
+                "Nothing planned for today 🎉";
+
+            focusList.appendChild(
+                empty
+            );
+
+        } else {
+
+            todayTasks.forEach(task => {
+
+                const li =
+                    document.createElement("li");
+
+
+                li.textContent =
+                    task.text;
+
+
+                li.classList.add(
+                    `priority-${task.priority}`
+                );
+
+
+                focusList.appendChild(
+                    li
+                );
+
+            });
+
+        }
+
+    }
+
+
+    /* ==================================
+       UPCOMING DEADLINES
+    ================================== */
+
+    if (upcomingList) {
+
+        upcomingList.innerHTML = "";
+
+
+        const upcomingTasks =
+            tasks
+                .filter(task => {
+
+                    if (task.completed) {
+                        return false;
+                    }
+
+                    if (!task.deadline) {
+                        return false;
+                    }
+
+
+                    const deadline =
+                        new Date(
+                            task.deadline
+                        );
+
+                    deadline.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+
+
+                    return (
+                        deadline.getTime() >
+                        today.getTime()
+                    );
+
+                })
+                .sort((a, b) => {
+
+                    return (
+                        new Date(a.deadline) -
+                        new Date(b.deadline)
+                    );
+
+                })
+                .slice(0, 5);
+
+
+        if (upcomingTasks.length === 0) {
+
+            const empty =
+                document.createElement("li");
+
+            empty.textContent =
+                "No upcoming deadlines 📅";
+
+            upcomingList.appendChild(
+                empty
+            );
+
+        } else {
+
+            upcomingTasks.forEach(task => {
+
+                const li =
+                    document.createElement("li");
+
+
+                const date =
+                    new Date(
+                        task.deadline
+                    );
+
+
+                const formattedDate =
+                    date.toLocaleDateString(
+                        "en-US",
+                        {
+                            day: "numeric",
+                            month: "short"
+                        }
+                    );
+
+
+                li.innerHTML =
+                    `<strong>${escapeHTML(task.text)}</strong>
+                     <span class="dashboard-deadline">
+                     ${formattedDate}
+                     </span>`;
+
+
+                li.classList.add(
+                    `priority-${task.priority}`
+                );
+
+
+                upcomingList.appendChild(
+                    li
+                );
+
+            });
+
+        }
+
+    }
+
+                       }
 
 /* ======================================
    DELETE TASK
@@ -812,6 +1049,16 @@ function updateDashboard() {
             `${percentage}%`;
 
     }
+       if (progressBar) {
+
+        progressBar.style.width =
+            `${percentage}%`;
+
+    }
+
+    updateDashboardLists();
+
+}
 
 }
 
