@@ -1,1 +1,464 @@
+/* ======================================
+   TASKY V2
+   calendar.css
+   Calendar Styling
+====================================== */
 
+
+/* ======================================
+   CALENDAR CARD
+====================================== */
+
+.calendar-card {
+    overflow: hidden;
+}
+
+
+/* ======================================
+   CALENDAR HEADER
+====================================== */
+
+.calendar-header {
+
+    display: grid;
+
+    grid-template-columns:
+        44px 1fr 44px;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+
+}
+
+
+.calendar-header h3 {
+
+    text-align: center;
+
+    margin: 0;
+
+}
+
+
+.calendar-header button {
+
+    width: 44px;
+
+    height: 44px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: var(--surface2);
+
+    color: var(--text);
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+
+}
+
+
+.calendar-header button:hover {
+
+    transform: scale(1.05);
+
+}
+
+
+/* ======================================
+   WEEKDAYS
+====================================== */
+
+.calendar-weekdays {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 6px;
+
+    margin-bottom: 6px;
+
+}
+
+
+.calendar-weekdays span {
+
+    text-align: center;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: var(--text-secondary);
+
+    padding: 6px 0;
+
+}
+
+
+/* ======================================
+   CALENDAR GRID
+====================================== */
+
+#calendar {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 6px;
+
+}
+
+
+/* ======================================
+   EMPTY DAYS
+====================================== */
+
+.calendar-empty {
+
+    aspect-ratio: 1;
+
+}
+
+
+/* ======================================
+   DAY
+====================================== */
+
+.day {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid transparent;
+
+    border-radius: 12px;
+
+    background: var(--surface2);
+
+    color: var(--text);
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border .2s ease;
+
+}
+
+
+.day:hover {
+
+    transform: translateY(-2px);
+
+    border-color:
+        var(--primary);
+
+}
+
+
+/* ======================================
+   DAY NUMBER
+====================================== */
+
+.day-number {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+/* ======================================
+   TODAY
+====================================== */
+
+.day.today {
+
+    background: var(--accent);
+
+    color: white;
+
+    font-weight: 700;
+
+}
+
+
+/* ======================================
+   SELECTED
+====================================== */
+
+.day.selected {
+
+    border: 2px solid
+        var(--primary);
+
+}
+
+
+/* ======================================
+   TASK DAY
+====================================== */
+
+.day.has-tasks {
+
+    font-weight: 700;
+
+}
+
+
+/* ======================================
+   TASK DOT
+====================================== */
+
+.task-dot {
+
+    position: absolute;
+
+    bottom: 4px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    font-size: 18px;
+
+    line-height: 10px;
+
+}
+
+
+/* ======================================
+   TASK COUNT
+====================================== */
+
+.task-count {
+
+    position: absolute;
+
+    top: 4px;
+
+    right: 5px;
+
+    min-width: 17px;
+
+    height: 17px;
+
+    padding: 0 4px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+/* ======================================
+   SELECTED DATE TASKS
+====================================== */
+
+#selectedDateTasks {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0;
+
+}
+
+
+.selected-date-heading {
+
+    background: transparent;
+
+    color: var(--text);
+
+    font-weight: 700;
+
+    padding: 4px 0 12px;
+
+}
+
+
+/* ======================================
+   CALENDAR TASK
+====================================== */
+
+.calendar-task {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    background: var(--surface2);
+
+    border-left: 4px solid
+        var(--primary);
+
+}
+
+
+.calendar-task strong {
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.calendar-task span {
+
+    font-size: 12px;
+
+    color: var(--text-secondary);
+
+    white-space: nowrap;
+
+}
+
+
+/* ======================================
+   COMPLETED TASK
+====================================== */
+
+.calendar-task.completed {
+
+    opacity: .65;
+
+}
+
+
+.calendar-task.completed strong {
+
+    text-decoration:
+        line-through;
+
+}
+
+
+/* ======================================
+   NO TASKS
+====================================== */
+
+.calendar-no-tasks {
+
+    color: var(--text-secondary);
+
+    text-align: center;
+
+    background: var(--surface2);
+
+}
+
+
+/* ======================================
+   MOBILE
+====================================== */
+
+@media (max-width: 380px) {
+
+    .calendar-weekdays {
+
+        gap: 3px;
+
+    }
+
+
+    #calendar {
+
+        gap: 3px;
+
+    }
+
+
+    .day {
+
+        border-radius: 8px;
+
+    }
+
+
+    .day-number {
+
+        font-size: 12px;
+
+    }
+
+
+    .task-dot {
+
+        bottom: 2px;
+
+    }
+
+
+    .task-count {
+
+        top: 2px;
+
+        right: 2px;
+
+        min-width: 14px;
+
+        height: 14px;
+
+        font-size: 8px;
+
+    }
+
+
+    .calendar-task {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 4px;
+
+    }
+
+  }
