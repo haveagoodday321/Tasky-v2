@@ -192,4 +192,68 @@ function updateAnalytics() {
     if (noDeadlineElement) {
         noDeadlineElement.textContent = noDeadline;
     }
+
+        // ----------------------------------------
+    // Productivity Insight
+    // ----------------------------------------
+
+    const scoreElement =
+        document.getElementById("productivityScore");
+
+    const insightElement =
+        document.getElementById("productivityInsight");
+
+
+    if (scoreElement) {
+        scoreElement.textContent =
+            `${completionRate}%`;
+    }
+
+
+    if (insightElement) {
+
+        if (total === 0) {
+
+            insightElement.textContent =
+                "Add some tasks to start tracking your productivity.";
+
+        }
+
+        else if (overdue > 0) {
+
+            insightElement.textContent =
+                `⚠️ You have ${overdue} overdue ${
+                    overdue === 1 ? "task" : "tasks"
+                }. Try completing these first.`;
+
+        }
+
+        else if (completionRate === 100) {
+
+            insightElement.textContent =
+                "🏆 Excellent! You've completed every task.";
+
+        }
+
+        else if (completionRate >= 75) {
+
+            insightElement.textContent =
+                "🔥 Great productivity! You're completing most of your tasks.";
+
+        }
+
+        else if (completionRate >= 50) {
+
+            insightElement.textContent =
+                "💪 You're making good progress. Keep pushing.";
+
+        }
+
+        else {
+
+            insightElement.textContent =
+                "🎯 Focus on completing a few important tasks first.";
+
+        }
+    }
 }
