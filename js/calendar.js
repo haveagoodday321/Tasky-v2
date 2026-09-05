@@ -221,16 +221,21 @@ function buildCalendar() {
            SELECTED DATE
         ================================== */
 
-        if (
-            selectedCalendarDate ===
-            dateString
-        ) {
+        if (!selectedCalendarDate) {
+    const today = new Date();
 
-            day.classList.add(
-                "selected"
-            );
-
+    if (
+        year === today.getFullYear() &&
+        month === today.getMonth()
+    ) {
+        selectedCalendarDate =
+            formatCalendarDate(today);
+    }
         }
+
+      if (selectedCalendarDate) {
+    showSelectedDateTasks(selectedCalendarDate);
+      }
 
 
         /* ==================================
