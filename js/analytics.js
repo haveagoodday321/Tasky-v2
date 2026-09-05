@@ -256,4 +256,122 @@ function updateAnalytics() {
 
         }
     }
+    // ----------------------------------------
+    // 7-Day Productivity History
+    // ----------------------------------------
+
+    const weeklyChart =
+        document.getElementById("weeklyChart");
+
+    if (weeklyChart) {
+
+        weeklyChart.innerHTML = "";
+
+        const today = new Date();
+
+        const days = [];
+
+        for (let i = 6; i >= 0; i--) {
+
+            const date = new Date(today);
+
+            date.setDate(
+                today.getDate() - i
+            );
+
+            date.setHours(0, 0, 0, 0);
+
+            days.push(date);
+        }
+
+
+        days.forEach(date => {
+
+            const nextDay =
+                new Date(date);
+
+            nextDay.setDate(
+                date.getDate() + 1
+            );
+
+
+            const completedCount =
+                tasks.filter(task => {
+
+                    if (!task.completedAt) {
+                        return false;
+                    }
+
+                    const completedDate =
+                        new Date(task.completedAt);
+
+                    return (
+                        completedDate >= date &&
+                        completedDate < nextDay
+                    );
+
+                }).length;
+
+
+            const dayContainer =
+                document.createElement("div");
+
+            dayContainer.className =
+                "weekly-chart-day";
+
+
+            const bar =
+                document.createElement("div");
+
+            bar.className =
+                "weekly-chart-bar";
+
+
+            // Give the bar a visible height
+            // even when the count is 0
+
+            const barHeight =
+                completedCount === 0
+                    ? 5
+                    : Math.min(
+                        100,
+                        completedCount * 20
+                    );
+
+            bar.style.height =
+                `${barHeight}%`;
+
+
+            const count =
+                document.createElement("strong");
+
+            count.textContent =
+                completedCount;
+
+
+            const label =
+                document.createElement("span");
+
+            label.textContent =
+                date.toLocaleDateString(
+                    "en-US",
+                    {
+                        weekday: "short"
+                    }
+                );
+
+
+            dayContainer.appendChild(bar);
+
+            dayContainer.appendChild(count);
+
+            dayContainer.appendChild(label);
+
+            weeklyChart.appendChild(
+                dayContainer
+            );
+
+        });
+
+    }
 }
