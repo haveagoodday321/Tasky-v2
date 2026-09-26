@@ -51,6 +51,16 @@ function setupSettings() {
             "resetAppBtn"
         );
 
+    const importButton =
+    document.getElementById(
+        "importBtn"
+    );
+
+const importFile =
+    document.getElementById(
+        "importFile"
+    );
+
 
     // ----------------------------------------
     // Export
@@ -81,6 +91,37 @@ function setupSettings() {
 
 }
 
+// ----------------------------------------
+// Import
+// ----------------------------------------
+
+if (
+    importButton &&
+    importFile
+) {
+
+    importButton.addEventListener(
+        "click",
+        () => {
+            importFile.click();
+        }
+    );
+
+    importFile.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                importFile.files[0];
+
+            importTaskyData(file);
+
+            importFile.value = "";
+
+        }
+    );
+
+}
 
 // ========================================
 // INITIALIZE SETTINGS
