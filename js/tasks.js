@@ -92,7 +92,12 @@ function generateID() {
 function createTask(
     text,
     priority = "Medium",
-    deadline = ""
+    deadline = "",
+    description = "",
+    duration = 60,
+    category = "Other",
+    tags = [],
+    subtasks = []
 ) {
 
     return {
@@ -101,11 +106,30 @@ function createTask(
 
         text: text.trim(),
 
+        description:
+            description.trim(),
+
         completed: false,
 
         priority: priority,
 
         deadline: deadline,
+
+        duration:
+            Number(duration) || 60,
+
+        category:
+            category || "Other",
+
+        tags:
+            Array.isArray(tags)
+                ? tags
+                : [],
+
+        subtasks:
+            Array.isArray(subtasks)
+                ? subtasks
+                : [],
 
         createdAt:
             new Date().toISOString(),
@@ -115,7 +139,6 @@ function createTask(
     };
 
 }
-
 
 /* ======================================
    ADD TASK
@@ -1370,6 +1393,26 @@ function openCreateTaskModal() {
             "modalPriority"
         );
 
+   const duration =
+    document.getElementById(
+        "modalDuration"
+    );
+
+const category =
+    document.getElementById(
+        "modalCategory"
+    );
+
+const tags =
+    document.getElementById(
+        "modalTags"
+    );
+
+const subtasksList =
+    document.getElementById(
+        "subtasksList"
+    );
+
 
     if (!modal) return;
 
@@ -1385,7 +1428,14 @@ function openCreateTaskModal() {
     deadline.value = "";
 
     priority.value = "Medium";
+   
+duration.value = "60";
 
+category.value = "Other";
+
+tags.value = "";
+
+subtasksList.innerHTML = "";
 
     modal.classList.add("active");
 
@@ -1449,7 +1499,26 @@ function openEditTaskModal(id) {
         document.getElementById(
             "modalPriority"
         );
+   
+const duration =
+    document.getElementById(
+        "modalDuration"
+    );
 
+const category =
+    document.getElementById(
+        "modalCategory"
+    );
+
+const tags =
+    document.getElementById(
+        "modalTags"
+    );
+
+const subtasksList =
+    document.getElementById(
+        "subtasksList"
+    );
 
     title.textContent =
         "Edit Task";
@@ -1469,6 +1538,36 @@ function openEditTaskModal(id) {
 
     priority.value =
         task.priority || "Medium";
+   duration.value =
+    task.duration || 60;
+
+category.value =
+    task.category || "Other";
+
+tags.value =
+    Array.isArray(task.tags)
+        ? task.tags.join(", ")
+        : "";
+
+subtasksList.innerHTML = "";
+
+
+/* Restore subtasks */
+
+if (Array.isArray(task.subtasks)) {
+
+    task.subtasks.forEach(
+        subtask => {
+
+            addSubtaskInput(
+                subtask.text || "",
+                subtask.completed || false
+            );
+
+        }
+    );
+
+}
 
 
     modal.classList.add("active");
@@ -1487,6 +1586,97 @@ function openEditTaskModal(id) {
 
 }
 
+/* ======================================
+   SUBTASK SYSTEM
+====================================== */
+
+function addSubtaskInput(
+    text = "",
+    completed = false
+) {
+
+    const list =
+        document.getElementById(
+            "subtasksList"
+        );
+
+    if (!list) return;
+
+
+    const row =
+        document.createElement("div");
+
+    row.className =
+        "subtask-row";
+
+
+    row.innerHTML = `
+
+        <input
+            type="text"
+            class="subtask-input"
+            placeholder="e.g. Research the topic"
+            value="${escapeHTML(text)}"
+        >
+
+        <button
+            type="button"
+            class="remove-subtask-btn"
+            aria-label="Remove subtask">
+
+            ×
+
+        </button>
+
+    `;
+
+
+    const removeButton =
+        row.querySelector(
+            ".remove-subtask-btn"
+        );
+
+
+    removeButton.addEventListener(
+        "click",
+        () => {
+
+            row.remove();
+
+        }
+    );
+
+
+    list.appendChild(row);
+
+}
+
+
+function getSubtasksFromModal() {
+
+    const inputs =
+        document.querySelectorAll(
+            ".subtask-input"
+        );
+
+
+    return Array.from(inputs)
+
+        .map(input => ({
+            id: generateID(),
+
+            text:
+                input.value.trim(),
+
+            completed: false
+        }))
+
+        .filter(
+            subtask =>
+                subtask.text.length > 0
+        );
+
+}
 
 /* CLOSE MODAL */
 
@@ -1535,11 +1725,33 @@ function saveTaskFromModal() {
         document.getElementById(
             "modalPriority"
         );
+   
+const duration =
+    document.getElementById(
+        "modalDuration"
+    );
 
+const category =
+    document.getElementById(
+        "modalCategory"
+    );
+
+const tags =
+    document.getElementById(
+        "modalTags"
+    );
 
     const text =
         input.value.trim();
+   
+const taskTags =
+    tags.value
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
 
+const taskSubtasks =
+    getSubtasksFromModal();
 
     if (!text) {
 
@@ -1587,6 +1799,17 @@ function saveTaskFromModal() {
         task.priority =
             priority.value;
 
+       task.duration =
+    Number(duration.value) || 60;
+
+task.category =
+    category.value || "Other";
+
+task.tags =
+    taskTags;
+
+task.subtasks =
+    taskSubtasks;
 
         saveTasks();
 
@@ -1612,15 +1835,17 @@ function saveTaskFromModal() {
     /* CREATE NEW TASK */
 
     const newTask =
-        createTask(
-            text,
-            priority.value,
-            deadline.value
-        );
+    createTask(
+        text,
+        priority.value,
+        deadline.value,
+        description.value,
+        duration.value,
+        category.value,
+        taskTags,
+        taskSubtasks
+    );
 
-
-    newTask.description =
-        description.value.trim();
 
 
     tasks.unshift(
@@ -1677,7 +1902,24 @@ document.addEventListener(
             document.getElementById(
                 "saveTaskModalBtn"
             );
+       
+const addSubtaskBtn =
+    document.getElementById(
+        "addSubtaskBtn"
+    );
 
+       if (addSubtaskBtn) {
+
+    addSubtaskBtn.addEventListener(
+        "click",
+        () => {
+
+            addSubtaskInput();
+
+        }
+    );
+
+       }
 
         const overlay =
             document.getElementById(
