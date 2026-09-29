@@ -202,3 +202,329 @@
     }
 
 }
+
+/* ========================================
+   TASK CREATION CARD
+======================================== */
+
+.task-create-card {
+    margin-bottom: 20px;
+}
+
+.task-create-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.task-create-header h3 {
+    margin: 0 0 5px;
+}
+
+.task-create-header p {
+    margin: 0;
+    opacity: 0.7;
+}
+
+.task-create-icon {
+    font-size: 32px;
+}
+
+
+/* ========================================
+   TASK MODAL
+======================================== */
+
+.task-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    visibility: hidden;
+    opacity: 0;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.task-modal.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+.task-modal-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(5px);
+}
+
+
+.task-modal-content {
+    position: relative;
+    z-index: 1;
+
+    width: min(100%, 600px);
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border-radius: 20px;
+
+    background: var(--card-bg, #ffffff);
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.25);
+
+    transform: translateY(20px) scale(0.98);
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+.task-modal.active .task-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+
+.task-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 20px;
+
+    margin-bottom: 24px;
+}
+
+
+.task-modal-header h2 {
+    margin: 0 0 6px;
+}
+
+
+.task-modal-header p {
+    margin: 0;
+
+    opacity: 0.7;
+
+    font-size: 14px;
+}
+
+
+.modal-close-btn {
+    border: none;
+    background: transparent;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    line-height: 1;
+
+    padding: 4px 8px;
+
+    opacity: 0.7;
+}
+
+
+.modal-close-btn:hover {
+    opacity: 1;
+}
+
+
+/* ========================================
+   TASK FORM
+======================================== */
+
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.task-form label {
+    font-weight: 600;
+
+    margin-top: 8px;
+}
+
+
+.task-form input,
+.task-form textarea,
+.task-form select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(128, 128, 128, 0.25);
+
+    border-radius: 12px;
+
+    font: inherit;
+
+    background: transparent;
+
+    color: inherit;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.task-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+
+.task-form input:focus,
+.task-form textarea:focus,
+.task-form select:focus {
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+
+.task-form-row {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+    margin-top: 5px;
+}
+
+
+.task-form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* ========================================
+   MODAL ACTIONS
+======================================== */
+
+.task-modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 24px;
+}
+
+
+.primary-btn,
+.secondary-btn {
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 12px 18px;
+
+    font: inherit;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+
+.primary-btn {
+    background: #4f46e5;
+
+    color: white;
+}
+
+
+.secondary-btn {
+    background: rgba(128, 128, 128, 0.12);
+
+    color: inherit;
+}
+
+
+.primary-btn:hover,
+.secondary-btn:hover {
+    transform: translateY(-1px);
+
+    opacity: 0.9;
+}
+
+
+.primary-btn:active,
+.secondary-btn:active {
+    transform: translateY(0);
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+    .task-modal {
+        padding: 12px;
+    }
+
+
+    .task-modal-content {
+        padding: 20px;
+
+        border-radius: 18px;
+
+        max-height: 94vh;
+    }
+
+
+    .task-form-row {
+        grid-template-columns: 1fr;
+    }
+
+
+    .task-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+
+    .primary-btn,
+    .secondary-btn {
+        width: 100%;
+    }
+
+   }
