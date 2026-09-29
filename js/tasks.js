@@ -745,58 +745,7 @@ function deleteTask(id) {
 
 function editTask(id) {
 
-    const task =
-        tasks.find(
-            task =>
-                String(task.id) ===
-                String(id)
-        );
-
-
-    if (!task) return;
-
-
-    const newText =
-        prompt(
-            "Edit task:",
-            task.text
-        );
-
-
-    if (newText === null) return;
-
-
-    const cleaned =
-        newText.trim();
-
-
-    if (!cleaned) {
-
-        showToast(
-            "Task cannot be empty."
-        );
-
-        return;
-
-    }
-
-
-    task.text =
-        cleaned;
-
-
-    saveTasks();
-
-    renderTasks();
-
-    updateDashboard();
-
-    updateAnalytics();
-
-
-    showToast(
-        "✏️ Task updated!"
-    );
+    openEditTaskModal(id);
 
 }
 
@@ -1431,4 +1380,424 @@ function setupTasks() {
 document.addEventListener(
     "DOMContentLoaded",
     setupTasks
+);
+
+/* ======================================
+   TASK MODAL
+====================================== */
+
+let editingTaskId = null;
+
+
+/* OPEN CREATE MODAL */
+
+function openCreateTaskModal() {
+
+    editingTaskId = null;
+
+    const modal =
+        document.getElementById("taskModal");
+
+    const title =
+        document.getElementById("taskModalTitle");
+
+    const input =
+        document.getElementById("modalTaskInput");
+
+    const description =
+        document.getElementById(
+            "modalTaskDescription"
+        );
+
+    const deadline =
+        document.getElementById(
+            "modalDeadline"
+        );
+
+    const priority =
+        document.getElementById(
+            "modalPriority"
+        );
+
+
+    if (!modal) return;
+
+
+    title.textContent =
+        "Create Task";
+
+
+    input.value = "";
+
+    description.value = "";
+
+    deadline.value = "";
+
+    priority.value = "Medium";
+
+
+    modal.classList.add("active");
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    setTimeout(() => {
+
+        input.focus();
+
+    }, 100);
+
+}
+
+
+/* OPEN EDIT MODAL */
+
+function openEditTaskModal(id) {
+
+    const task =
+        tasks.find(
+            task =>
+                String(task.id) ===
+                String(id)
+        );
+
+
+    if (!task) return;
+
+
+    editingTaskId = task.id;
+
+
+    const modal =
+        document.getElementById("taskModal");
+
+    const title =
+        document.getElementById(
+            "taskModalTitle"
+        );
+
+    const input =
+        document.getElementById(
+            "modalTaskInput"
+        );
+
+    const description =
+        document.getElementById(
+            "modalTaskDescription"
+        );
+
+    const deadline =
+        document.getElementById(
+            "modalDeadline"
+        );
+
+    const priority =
+        document.getElementById(
+            "modalPriority"
+        );
+
+
+    title.textContent =
+        "Edit Task";
+
+
+    input.value =
+        task.text || "";
+
+
+    description.value =
+        task.description || "";
+
+
+    deadline.value =
+        task.deadline || "";
+
+
+    priority.value =
+        task.priority || "Medium";
+
+
+    modal.classList.add("active");
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    setTimeout(() => {
+
+        input.focus();
+
+    }, 100);
+
+}
+
+
+/* CLOSE MODAL */
+
+function closeTaskModal() {
+
+    const modal =
+        document.getElementById("taskModal");
+
+
+    if (!modal) return;
+
+
+    modal.classList.remove("active");
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    editingTaskId = null;
+
+}
+
+
+/* SAVE TASK */
+
+function saveTaskFromModal() {
+
+    const input =
+        document.getElementById(
+            "modalTaskInput"
+        );
+
+    const description =
+        document.getElementById(
+            "modalTaskDescription"
+        );
+
+    const deadline =
+        document.getElementById(
+            "modalDeadline"
+        );
+
+    const priority =
+        document.getElementById(
+            "modalPriority"
+        );
+
+
+    const text =
+        input.value.trim();
+
+
+    if (!text) {
+
+        showToast(
+            "Please enter a task name."
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    /* EDIT EXISTING TASK */
+
+    if (editingTaskId !== null) {
+
+        const task =
+            tasks.find(
+                task =>
+                    String(task.id) ===
+                    String(editingTaskId)
+            );
+
+
+        if (!task) {
+
+            closeTaskModal();
+
+            return;
+
+        }
+
+
+        task.text =
+            text;
+
+        task.description =
+            description.value.trim();
+
+        task.deadline =
+            deadline.value;
+
+        task.priority =
+            priority.value;
+
+
+        saveTasks();
+
+        renderTasks();
+
+        updateDashboard();
+
+        updateAnalytics();
+
+
+        showToast(
+            "✅ Task updated!"
+        );
+
+
+        closeTaskModal();
+
+        return;
+
+    }
+
+
+    /* CREATE NEW TASK */
+
+    const newTask =
+        createTask(
+            text,
+            priority.value,
+            deadline.value
+        );
+
+
+    newTask.description =
+        description.value.trim();
+
+
+    tasks.unshift(
+        newTask
+    );
+
+
+    saveTasks();
+
+    renderTasks();
+
+    updateDashboard();
+
+    updateAnalytics();
+
+
+    showToast(
+        "✅ Task created!"
+    );
+
+
+    closeTaskModal();
+
+}
+
+
+/* ======================================
+   MODAL EVENT LISTENERS
+====================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const openBtn =
+            document.getElementById(
+                "openTaskModalBtn"
+            );
+
+
+        const closeBtn =
+            document.getElementById(
+                "closeTaskModalBtn"
+            );
+
+
+        const cancelBtn =
+            document.getElementById(
+                "cancelTaskModalBtn"
+            );
+
+
+        const saveBtn =
+            document.getElementById(
+                "saveTaskModalBtn"
+            );
+
+
+        const overlay =
+            document.getElementById(
+                "taskModalOverlay"
+            );
+
+
+        if (openBtn) {
+
+            openBtn.addEventListener(
+                "click",
+                openCreateTaskModal
+            );
+
+        }
+
+
+        if (closeBtn) {
+
+            closeBtn.addEventListener(
+                "click",
+                closeTaskModal
+            );
+
+        }
+
+
+        if (cancelBtn) {
+
+            cancelBtn.addEventListener(
+                "click",
+                closeTaskModal
+            );
+
+        }
+
+
+        if (overlay) {
+
+            overlay.addEventListener(
+                "click",
+                closeTaskModal
+            );
+
+        }
+
+
+        if (saveBtn) {
+
+            saveBtn.addEventListener(
+                "click",
+                saveTaskFromModal
+            );
+
+        }
+
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeTaskModal();
+
+                }
+
+            }
+        );
+
+    }
 );
