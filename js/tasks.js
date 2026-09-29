@@ -1164,30 +1164,6 @@ function setupTasks() {
 
 
     /* ==================================
-       ADD TASK BUTTON
-    ================================== */
-
-    const addButton =
-        document.getElementById(
-            "addTaskBtn"
-        );
-
-
-    if (addButton) {
-
-        addButton.onclick =
-            addTask;
-
-    } else {
-
-        console.error(
-            "❌ addTaskBtn was not found."
-        );
-
-    }
-
-
-    /* ==================================
        QUICK ADD BUTTON
     ================================== */
 
@@ -1314,31 +1290,6 @@ function setupTasks() {
     /* ==================================
        ENTER KEY — NORMAL TASK
     ================================== */
-
-    const taskInput =
-        document.getElementById(
-            "taskInput"
-        );
-
-
-    if (taskInput) {
-
-        taskInput.onkeydown =
-            function (event) {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    event.preventDefault();
-
-                    addTask();
-
-                }
-
-            };
-
-    }
 
 
     /* ==================================
