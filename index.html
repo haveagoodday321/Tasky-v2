@@ -944,50 +944,177 @@ aria-label="Main navigation">
                 placeholder="Optional details...">
             </textarea>
 
+<div class="task-form-row">
 
-            <div class="task-form-row">
+    <div class="task-form-group">
 
-                <div class="task-form-group">
+        <label for="modalDeadline">
+            Deadline
+        </label>
 
-                    <label for="modalDeadline">
-                        Deadline
-                    </label>
+        <input
+            id="modalDeadline"
+            type="date">
 
-                    <input
-                        id="modalDeadline"
-                        type="date">
-
-                </div>
+    </div>
 
 
-                <div class="task-form-group">
+    <div class="task-form-group">
 
-                    <label for="modalPriority">
-                        Priority
-                    </label>
+        <label for="modalPriority">
+            Priority
+        </label>
 
-                    <select id="modalPriority">
+        <select id="modalPriority">
 
-                        <option value="Low">
-                            🟢 Low
-                        </option>
+            <option value="Low">
+                🟢 Low
+            </option>
 
-                        <option
-                            value="Medium"
-                            selected>
-                            🟠 Medium
-                        </option>
+            <option
+                value="Medium"
+                selected>
+                🟠 Medium
+            </option>
 
-                        <option value="High">
-                            🔴 High
-                        </option>
+            <option value="High">
+                🔴 High
+            </option>
 
-                    </select>
+        </select>
 
-                </div>
+    </div>
 
-            </div>
+</div>
 
+
+<div class="task-form-row">
+
+    <div class="task-form-group">
+
+        <label for="modalDuration">
+            Estimated time
+        </label>
+
+        <select id="modalDuration">
+
+            <option value="15">
+                ⚡ 15 minutes
+            </option>
+
+            <option value="30">
+                ⏱️ 30 minutes
+            </option>
+
+            <option value="45">
+                ⏱️ 45 minutes
+            </option>
+
+            <option value="60"
+                    selected>
+                🕐 1 hour
+            </option>
+
+            <option value="90">
+                🕐 1.5 hours
+            </option>
+
+            <option value="120">
+                🕑 2 hours
+            </option>
+
+            <option value="180">
+                🕒 3 hours
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="task-form-group">
+
+        <label for="modalCategory">
+            Category
+        </label>
+
+        <select id="modalCategory">
+
+            <option value="Personal">
+                👤 Personal
+            </option>
+
+            <option value="School">
+                🎓 School
+            </option>
+
+            <option value="Work">
+                💼 Work
+            </option>
+
+            <option value="Fitness">
+                🏃 Fitness
+            </option>
+
+            <option value="Project">
+                🚀 Project
+            </option>
+
+            <option value="Other"
+                    selected>
+                📌 Other
+            </option>
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<label for="modalTags">
+    Tags
+</label>
+
+<input
+    id="modalTags"
+    type="text"
+    placeholder="e.g. maths, exam, urgent">
+
+
+<div class="subtasks-section">
+
+    <div class="subtasks-header">
+
+        <div>
+
+            <label>
+                Subtasks
+            </label>
+
+            <p>
+                Break a large task into smaller steps.
+            </p>
+
+        </div>
+
+        <button
+            id="addSubtaskBtn"
+            class="secondary-btn"
+            type="button">
+
+            + Add Step
+
+        </button>
+
+    </div>
+
+
+    <div id="subtasksList"
+         class="subtasks-list">
+    </div>
+
+</div>
 
             <div class="task-modal-actions">
 
