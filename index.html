@@ -194,23 +194,34 @@ Tasks
 
 </h2>
 
-<div class="card">
+<div class="card task-create-card">
 
-<input
-id="taskInput"
-type="text"
-placeholder="Task name">
+    <div class="task-create-header">
 
-<input
-id="deadline"
-type="date">
+        <div>
+            <h3>Create a Task</h3>
 
-<select
-id="priority">
+            <p>
+                Add something you need to get done.
+            </p>
+        </div>
 
-<option>
+        <span class="task-create-icon">
+            ✨
+        </span>
 
-Low
+    </div>
+
+    <button
+        id="openTaskModalBtn"
+        class="primary-btn"
+        type="button">
+
+        + Create Task
+
+    </button>
+
+</div>
 
 </option>
 
@@ -888,5 +899,148 @@ aria-label="Main navigation">
 
 <script src="js/app.js"></script>
 
+<!-- ========================================
+     TASK EDITOR MODAL
+======================================== -->
+
+<div
+    id="taskModal"
+    class="task-modal"
+    aria-hidden="true">
+
+    <div
+        class="task-modal-overlay"
+        id="taskModalOverlay">
+    </div>
+
+    <div
+        class="task-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="taskModalTitle">
+
+        <div class="task-modal-header">
+
+            <div>
+
+                <h2 id="taskModalTitle">
+                    Create Task
+                </h2>
+
+                <p>
+                    Organise your task before you get started.
+                </p>
+
+            </div>
+
+            <button
+                id="closeTaskModalBtn"
+                class="modal-close-btn"
+                type="button"
+                aria-label="Close">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="task-form">
+
+            <label for="modalTaskInput">
+                Task name
+            </label>
+
+            <input
+                id="modalTaskInput"
+                type="text"
+                placeholder="e.g. Complete Mathematics homework"
+                autocomplete="off">
+
+
+            <label for="modalTaskDescription">
+                Description
+            </label>
+
+            <textarea
+                id="modalTaskDescription"
+                rows="3"
+                placeholder="Optional details...">
+            </textarea>
+
+
+            <div class="task-form-row">
+
+                <div class="task-form-group">
+
+                    <label for="modalDeadline">
+                        Deadline
+                    </label>
+
+                    <input
+                        id="modalDeadline"
+                        type="date">
+
+                </div>
+
+
+                <div class="task-form-group">
+
+                    <label for="modalPriority">
+                        Priority
+                    </label>
+
+                    <select id="modalPriority">
+
+                        <option value="Low">
+                            🟢 Low
+                        </option>
+
+                        <option
+                            value="Medium"
+                            selected>
+                            🟠 Medium
+                        </option>
+
+                        <option value="High">
+                            🔴 High
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="task-modal-actions">
+
+                <button
+                    id="cancelTaskModalBtn"
+                    class="secondary-btn"
+                    type="button">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    id="saveTaskModalBtn"
+                    class="primary-btn"
+                    type="button">
+
+                    Save Task
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+    
 </body>
 </html>
