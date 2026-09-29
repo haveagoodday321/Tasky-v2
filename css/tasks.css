@@ -528,3 +528,85 @@
     }
 
    }
+
+/* ========================================
+   ADVANCED TASK FIELDS
+======================================== */
+
+.subtasks-section {
+    margin-top: 10px;
+}
+
+.subtasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.subtasks-header label {
+    display: block;
+    margin-top: 0;
+}
+
+.subtasks-header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    opacity: 0.65;
+}
+
+.subtasks-header .secondary-btn {
+    white-space: nowrap;
+    padding: 9px 12px;
+    font-size: 13px;
+}
+
+.subtasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.subtask-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.subtask-row input {
+    flex: 1;
+    margin: 0;
+}
+
+.remove-subtask-btn {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 10px;
+
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.remove-subtask-btn:hover {
+    background: rgba(239, 68, 68, 0.18);
+}
+
+@media (max-width: 600px) {
+
+    .subtasks-header {
+        flex-direction: column;
+    }
+
+    .subtasks-header .secondary-btn {
+        width: 100%;
+    }
+
+}
