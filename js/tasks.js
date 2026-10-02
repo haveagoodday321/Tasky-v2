@@ -586,7 +586,6 @@ function renderTasks() {
 
 </div>
 
-
 ${
     Array.isArray(task.subtasks) &&
     task.subtasks.length > 0
@@ -607,13 +606,49 @@ ${
 
                 </div>
 
+
                 <div class="subtask-progress-track">
 
                     <div
                         class="subtask-progress-fill"
                         style="width: ${getSubtaskProgress(task)}%"
-                    >
-                    </div>
+                    ></div>
+
+                </div>
+
+
+                <div class="subtask-list-preview">
+
+                    ${task.subtasks.map(
+                        subtask => `
+                            <button
+                                type="button"
+                                class="subtask-check ${
+                                    subtask.completed
+                                        ? "completed"
+                                        : ""
+                                }"
+                                data-task-id="${task.id}"
+                                data-subtask-id="${subtask.id}"
+                            >
+
+                                <span class="subtask-check-icon">
+                                    ${
+                                        subtask.completed
+                                            ? "✓"
+                                            : "○"
+                                    }
+                                </span>
+
+                                <span class="subtask-check-text">
+                                    ${escapeHTML(
+                                        subtask.text
+                                    )}
+                                </span>
+
+                            </button>
+                        `
+                    ).join("")}
 
                 </div>
 
