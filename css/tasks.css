@@ -751,4 +751,43 @@
     opacity: 1;
 }
 
+/* ========================================
+   TASK METADATA BADGES
+======================================== */
+
+.duration,
+.category {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(99, 102, 241, 0.10);
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+}
+
+
+/* ========================================
+   SUBTASK COMPLETION
+======================================== */
+
+.subtask-check.completed {
+    opacity: 0.65;
+}
+
+.subtask-check.completed
+.subtask-check-text {
+    text-decoration: line-through;
+}
+
+.subtask-check.completed
+.subtask-check-icon {
+    color: #22c55e;
+    opacity: 1;
 }
