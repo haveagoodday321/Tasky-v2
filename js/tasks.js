@@ -14,6 +14,7 @@ let tasks = [];
 let currentSearch = "";
 let currentStatus = "all";
 let currentPriority = "all";
+let currentCategory = "all";
 let currentSort = "newest";
 
 
@@ -329,12 +330,29 @@ function getFilteredTasks() {
                 .trim()
                 .toLowerCase();
 
-        filtered =
-            filtered.filter(task =>
-                task.text
-                    .toLowerCase()
-                    .includes(search)
-            );
+filtered =
+    filtered.filter(task => {
+
+        const taskText =
+            (task.text || "")
+                .toLowerCase();
+
+        const taskTags =
+            Array.isArray(task.tags)
+                ? task.tags.join(" ").toLowerCase()
+                : "";
+
+        const taskCategory =
+            (task.category || "")
+                .toLowerCase();
+
+        return (
+            taskText.includes(search) ||
+            taskTags.includes(search) ||
+            taskCategory.includes(search)
+        );
+
+    });
 
     }
 
@@ -378,7 +396,21 @@ function getFilteredTasks() {
             );
 
     }
+   
+/* CATEGORY */
 
+if (currentCategory !== "all") {
+
+    filtered =
+        filtered.filter(task =>
+
+            (task.category || "Other")
+                ===
+            currentCategory
+
+        );
+
+}
 
     /* SORT */
 
@@ -582,6 +614,25 @@ function renderTasks() {
                 </span>
             `
             : ""
+    }
+
+    ${
+    Array.isArray(task.tags) &&
+    task.tags.length > 0
+        ? `
+            <div class="task-tags">
+
+                ${task.tags.map(
+                    tag => `
+                        <span class="task-tag">
+                            #${escapeHTML(tag)}
+                        </span>
+                    `
+                ).join("")}
+
+            </div>
+        `
+        : ""
     }
 
 </div>
@@ -1434,7 +1485,11 @@ function setupTasks() {
         document.getElementById(
             "priorityFilter"
         );
-
+   
+const categoryFilter =
+    document.getElementById(
+        "categoryFilter"
+    );
 
     if (priorityFilter) {
 
