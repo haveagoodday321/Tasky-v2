@@ -543,28 +543,85 @@ function renderTasks() {
                     ${escapeHTML(task.text)}
                 </div>
 
+<div class="task-meta">
 
-                <div class="task-meta">
+    <span
+        class="priority ${task.priority.toLowerCase()}"
+    >
+        ${escapeHTML(task.priority)}
+    </span>
 
-                    <span
-                        class="priority ${task.priority.toLowerCase()}"
-                    >
-                        ${escapeHTML(task.priority)}
+
+    ${
+        deadlineText
+            ? `
+                <span class="deadline">
+                    📅 ${deadlineText}
+                </span>
+            `
+            : ""
+    }
+
+
+    ${
+        task.duration
+            ? `
+                <span class="duration">
+                    ⏱️ ${formatDuration(task.duration)}
+                </span>
+            `
+            : ""
+    }
+
+
+    ${
+        task.category
+            ? `
+                <span class="category">
+                    ${escapeHTML(task.category)}
+                </span>
+            `
+            : ""
+    }
+
+</div>
+
+
+${
+    Array.isArray(task.subtasks) &&
+    task.subtasks.length > 0
+        ? `
+            <div class="subtask-progress">
+
+                <div class="subtask-progress-header">
+
+                    <span>
+                        🧩 Subtasks
                     </span>
 
-
-                    ${
-                        deadlineText
-                            ? `
-                                <span class="deadline">
-                                    📅 ${deadlineText}
-                                </span>
-                            `
-                            : ""
-                    }
+                    <strong>
+                        ${getCompletedSubtaskCount(task)}
+                        /
+                        ${task.subtasks.length}
+                    </strong>
 
                 </div>
 
+                <div class="subtask-progress-track">
+
+                    <div
+                        class="subtask-progress-fill"
+                        style="width: ${getSubtaskProgress(task)}%"
+                    >
+                    </div>
+
+                </div>
+
+            </div>
+        `
+        : ""
+}
+                
             </div>
 
 
@@ -613,6 +670,66 @@ function renderTasks() {
 
 }
 
+/* ======================================
+   TOGGLE SUBTASK
+====================================== */
+
+function toggleSubtask(
+    taskId,
+    subtaskId
+) {
+
+    const task =
+        tasks.find(
+            task =>
+                String(task.id) ===
+                String(taskId)
+        );
+
+
+    if (!task) return;
+
+
+    if (
+        !Array.isArray(task.subtasks)
+    ) {
+
+        return;
+
+    }
+
+
+    const subtask =
+        task.subtasks.find(
+            item =>
+                String(item.id) ===
+                String(subtaskId)
+        );
+
+
+    if (!subtask) return;
+
+
+    subtask.completed =
+        !subtask.completed;
+
+
+    saveTasks();
+
+    renderTasks();
+
+    updateDashboard();
+
+    updateAnalytics();
+
+
+    showToast(
+        subtask.completed
+            ? "✅ Subtask completed!"
+            : "Subtask reopened."
+    );
+
+}
 
 /* ======================================
    TASK BUTTONS
@@ -658,6 +775,20 @@ function setupTaskButtons() {
 
                 deleteTask(
                     this.dataset.id
+                );
+
+            };
+
+        });
+       document
+        .querySelectorAll(".subtask-check")
+        .forEach(button => {
+
+            button.onclick = function () {
+
+                toggleSubtask(
+                    this.dataset.taskId,
+                    this.dataset.subtaskId
                 );
 
             };
@@ -1675,6 +1806,87 @@ function getSubtasksFromModal() {
             subtask =>
                 subtask.text.length > 0
         );
+
+}
+
+/* ======================================
+   SUBTASK PROGRESS
+====================================== */
+
+function getCompletedSubtaskCount(task) {
+
+    if (
+        !task ||
+        !Array.isArray(task.subtasks)
+    ) {
+
+        return 0;
+
+    }
+
+
+    return task.subtasks.filter(
+        subtask =>
+            subtask.completed === true
+    ).length;
+
+}
+
+
+function getSubtaskProgress(task) {
+
+    if (
+        !task ||
+        !Array.isArray(task.subtasks) ||
+        task.subtasks.length === 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    const completed =
+        getCompletedSubtaskCount(task);
+
+
+    return Math.round(
+        (completed /
+            task.subtasks.length) *
+        100
+    );
+
+}
+
+
+function formatDuration(minutes) {
+
+    const value =
+        Number(minutes) || 0;
+
+
+    if (value < 60) {
+
+        return `${value} min`;
+
+    }
+
+
+    const hours =
+        Math.floor(value / 60);
+
+    const remaining =
+        value % 60;
+
+
+    if (remaining === 0) {
+
+        return `${hours}h`;
+
+    }
+
+
+    return `${hours}h ${remaining}m`;
 
 }
 
