@@ -459,3 +459,548 @@ function getPlannerReason(task) {
     );
 
       }
+
+/* ======================================
+   SMART PLANNER UI
+====================================== */
+
+
+function formatPlannerTime(
+    minutes
+) {
+
+    const value =
+        Number(minutes) || 0;
+
+
+    if (value < 60) {
+
+        return `${value}m`;
+
+    }
+
+
+    const hours =
+        Math.floor(
+            value / 60
+        );
+
+
+    const remaining =
+        value % 60;
+
+
+    if (remaining === 0) {
+
+        return `${hours}h`;
+
+    }
+
+
+    return `${hours}h ${remaining}m`;
+
+}
+
+
+/* ======================================
+   RENDER PLANNER
+====================================== */
+
+function renderSmartPlanner() {
+
+    const list =
+        document.getElementById(
+            "plannerTaskList"
+        );
+
+
+    if (!list) return;
+
+
+    const plannedTasks =
+        getSmartPlan(
+            tasks
+        );
+
+
+    const topTasks =
+        plannedTasks.slice(
+            0,
+            10
+        );
+
+
+    /* SUMMARY */
+
+    const count =
+        document.getElementById(
+            "plannerTaskCount"
+        );
+
+
+    const totalTime =
+        document.getElementById(
+            "plannerTimeTotal"
+        );
+
+
+    const highPriority =
+        document.getElementById(
+            "plannerHighPriority"
+        );
+
+
+    if (count) {
+
+        count.textContent =
+            topTasks.length;
+
+    }
+
+
+    const minutes =
+        topTasks.reduce(
+            (
+                total,
+                task
+            ) =>
+                total +
+                (
+                    Number(
+                        task.duration
+                    ) || 60
+                ),
+            0
+        );
+
+
+    if (totalTime) {
+
+        totalTime.textContent =
+            formatPlannerTime(
+                minutes
+            );
+
+    }
+
+
+    const highCount =
+        topTasks.filter(
+            task =>
+                (
+                    task.priority ||
+                    ""
+                ).toLowerCase()
+                ===
+                "high"
+        ).length;
+
+
+    if (highPriority) {
+
+        highPriority.textContent =
+            highCount;
+
+    }
+
+
+    /* EMPTY */
+
+    if (
+        topTasks.length === 0
+    ) {
+
+        list.innerHTML = `
+
+            <div class="planner-empty">
+
+                <div class="planner-empty-icon">
+                    🎉
+                </div>
+
+                <p>
+                    You're all caught up!
+                    No unfinished tasks need planning.
+                </p>
+
+            </div>
+
+        `;
+
+
+        renderPlannerAttention(
+            []
+        );
+
+        renderPlannerQuickWin(
+            []
+        );
+
+        return;
+
+    }
+
+
+    /* TASKS */
+
+    list.innerHTML = "";
+
+
+    topTasks.forEach(
+        (
+            task,
+            index
+        ) => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "planner-task";
+
+
+            const reason =
+                getPlannerReason(
+                    task
+                );
+
+
+            const duration =
+                formatPlannerTime(
+                    task.duration
+                );
+
+
+            const priority =
+                (
+                    task.priority ||
+                    "Medium"
+                );
+
+
+            const priorityIcon =
+                priority === "High"
+                    ? "🔴"
+                    : priority === "Medium"
+                        ? "🟠"
+                        : "🟢";
+
+
+            item.innerHTML = `
+
+                <div
+                    class="planner-task-number">
+
+                    ${index + 1}
+
+                </div>
+
+
+                <div
+                    class="planner-task-content">
+
+                    <span
+                        class="planner-task-title">
+
+                        ${escapeHTML(
+                            task.text
+                        )}
+
+                    </span>
+
+
+                    <div
+                        class="planner-task-meta">
+
+                        <span>
+                            ${priorityIcon}
+                            ${escapeHTML(
+                                priority
+                            )}
+                        </span>
+
+
+                        <span>
+                            ⏱️ ${duration}
+                        </span>
+
+
+                        ${
+                            task.category
+                                ? `
+                                    <span>
+                                        📂
+                                        ${escapeHTML(
+                                            task.category
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <small
+                        class="planner-task-reason">
+
+                        ${escapeHTML(
+                            reason
+                        )}
+
+                    </small>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                item
+            );
+
+        }
+    );
+
+
+    renderPlannerAttention(
+        topTasks
+    );
+
+
+    renderPlannerQuickWin(
+        topTasks
+    );
+
+}
+
+
+/* ======================================
+   ATTENTION MESSAGE
+====================================== */
+
+function renderPlannerAttention(
+    plannedTasks
+) {
+
+    const container =
+        document.getElementById(
+            "plannerAttention"
+        );
+
+
+    if (!container) return;
+
+
+    const urgent =
+        plannedTasks.filter(
+            task => {
+
+                const days =
+                    plannerDaysUntil(
+                        task.deadline
+                    );
+
+
+                return (
+                    days !== null &&
+                    days <= 1 &&
+                    !task.completed
+                );
+
+            }
+        );
+
+
+    if (
+        urgent.length === 0
+    ) {
+
+        container.innerHTML = "";
+
+        return;
+
+    }
+
+
+    container.innerHTML = `
+
+        <div class="planner-alert">
+
+            <span class="planner-alert-icon">
+                ⚠️
+            </span>
+
+            <div>
+
+                <strong>
+                    ${urgent.length}
+                    task${
+                        urgent.length === 1
+                            ? ""
+                            : "s"
+                    }
+                    need attention soon.
+                </strong>
+
+                <p>
+                    Tasky has moved these tasks
+                    higher in your plan because
+                    their deadlines are approaching.
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ======================================
+   QUICK WIN
+====================================== */
+
+function renderPlannerQuickWin(
+    plannedTasks
+) {
+
+    const container =
+        document.getElementById(
+            "plannerQuickWin"
+        );
+
+
+    if (!container) return;
+
+
+    const quickWin =
+        plannedTasks
+            .filter(
+                task =>
+                    (
+                        Number(
+                            task.duration
+                        ) || 60
+                    ) <= 30
+            )
+            .sort(
+                (
+                    a,
+                    b
+                ) =>
+                    (
+                        Number(
+                            a.duration
+                        ) || 60
+                    ) -
+                    (
+                        Number(
+                            b.duration
+                        ) || 60
+                    )
+            )[0];
+
+
+    if (!quickWin) {
+
+        container.innerHTML = "";
+
+        return;
+
+    }
+
+
+    container.innerHTML = `
+
+        <div
+            class="planner-quick-win-content">
+
+            <div>
+
+                <h3>
+                    ⚡ Quick Win
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        quickWin.text
+                    )}
+                    ·
+                    ${
+                        formatPlannerTime(
+                            quickWin.duration
+                        )
+                    }
+                </p>
+
+            </div>
+
+
+            <span
+                class="planner-quick-win-badge">
+
+                Easy progress
+
+            </span>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ======================================
+   PLANNER BUTTON
+====================================== */
+
+function openSmartPlanner() {
+
+    const plannerSection =
+        document.getElementById(
+            "plannerSection"
+        );
+
+
+    if (!plannerSection) return;
+
+
+    document
+        .querySelectorAll(
+            ".app-section"
+        )
+        .forEach(
+            section =>
+                section.classList.remove(
+                    "active"
+                )
+        );
+
+
+    plannerSection.classList.add(
+        "active"
+    );
+
+
+    renderSmartPlanner();
+
+}
+
+
+/* ======================================
+   AUTO UPDATE
+====================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        renderSmartPlanner();
+
+    }
+);
