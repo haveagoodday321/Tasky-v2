@@ -1484,6 +1484,24 @@ function setupTasks() {
 
     }
 
+   const viewSmartPlanBtn =
+    document.getElementById(
+        "viewSmartPlanBtn"
+    );
+
+
+if (viewSmartPlanBtn) {
+
+    viewSmartPlanBtn.onclick =
+        function () {
+
+            showToast(
+                "🧠 Full Smart Planner coming next!"
+            );
+
+        };
+
+}
 
     /* ==================================
        SEARCH
