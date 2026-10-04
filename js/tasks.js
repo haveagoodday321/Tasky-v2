@@ -1489,19 +1489,24 @@ function setupTasks() {
         "viewSmartPlanBtn"
     );
 
-
 if (viewSmartPlanBtn) {
 
     viewSmartPlanBtn.onclick =
         function () {
 
-            showToast(
-                "🧠 Full Smart Planner coming next!"
-            );
+            if (
+                typeof openSmartPlanner ===
+                "function"
+            ) {
+
+                openSmartPlanner();
+
+            }
 
         };
 
 }
+
 
     /* ==================================
        SEARCH
