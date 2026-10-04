@@ -1491,6 +1491,20 @@ const categoryFilter =
         "categoryFilter"
     );
 
+   if (categoryFilter) {
+
+    categoryFilter.onchange =
+        function () {
+
+            currentCategory =
+                this.value;
+
+            renderTasks();
+
+        };
+
+   }
+
     if (priorityFilter) {
 
         priorityFilter.onchange =
