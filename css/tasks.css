@@ -822,3 +822,222 @@
     font-size: 11px;
     font-weight: 600;
 }
+
+/* ========================================
+   SMART PLANNER
+======================================== */
+
+.smart-focus-card {
+    overflow: hidden;
+}
+
+
+.smart-focus-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+}
+
+
+.smart-focus-header h3 {
+    margin: 0 0 6px;
+}
+
+
+.smart-focus-header p {
+    margin: 0;
+
+    font-size: 13px;
+
+    opacity: 0.65;
+
+    line-height: 1.5;
+}
+
+
+.smart-focus-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(99, 102, 241, 0.12);
+
+    font-size: 20px;
+
+    flex-shrink: 0;
+}
+
+
+/* ========================================
+   SMART PLAN ITEMS
+======================================== */
+
+.smart-plan-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.smart-plan-item {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(128, 128, 128, 0.06);
+
+    border:
+        1px solid
+        rgba(128, 128, 128, 0.10);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+
+.smart-plan-item:hover {
+    transform: translateX(2px);
+
+    background:
+        rgba(99, 102, 241, 0.07);
+}
+
+
+.smart-plan-number {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 30px;
+
+    height: 30px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(99, 102, 241, 0.12);
+
+    color:
+        #6366f1;
+
+    font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+
+.smart-plan-content {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.smart-plan-content strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.smart-plan-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    font-size: 11px;
+
+    opacity: 0.7;
+
+    margin-bottom: 4px;
+}
+
+
+.smart-plan-content small {
+    display: block;
+
+    font-size: 11px;
+
+    opacity: 0.65;
+}
+
+
+/* ========================================
+   EMPTY STATE
+======================================== */
+
+.smart-plan-empty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 20px 10px;
+}
+
+
+.smart-plan-empty span {
+    font-size: 30px;
+
+    margin-bottom: 8px;
+}
+
+
+.smart-plan-empty p {
+    margin: 0;
+
+    font-size: 13px;
+
+    opacity: 0.65;
+}
+
+
+/* ========================================
+   VIEW PLAN BUTTON
+======================================== */
+
+.smart-plan-button {
+    width: 100%;
+
+    margin-top: 15px;
+}
