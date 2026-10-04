@@ -1041,3 +1041,371 @@
 
     margin-top: 15px;
 }
+
+/* ========================================
+   SMART PLANNER PAGE
+======================================== */
+
+.planner-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+
+.planner-summary-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 18px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(128, 128, 128, 0.06);
+
+    border:
+        1px solid
+        rgba(128, 128, 128, 0.10);
+}
+
+
+.planner-summary-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(99, 102, 241, 0.12);
+
+    font-size: 20px;
+
+    flex-shrink: 0;
+}
+
+
+.planner-summary-card strong {
+    display: block;
+
+    font-size: 22px;
+
+    line-height: 1.2;
+}
+
+
+.planner-summary-card span:last-child {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    opacity: 0.65;
+}
+
+
+/* ========================================
+   ATTENTION
+======================================== */
+
+.planner-attention {
+    margin-bottom: 20px;
+}
+
+
+.planner-alert {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(239, 68, 68, 0.08);
+
+    border:
+        1px solid
+        rgba(239, 68, 68, 0.15);
+}
+
+
+.planner-alert-icon {
+    font-size: 20px;
+}
+
+
+.planner-alert strong {
+    display: block;
+
+    margin-bottom: 4px;
+}
+
+
+.planner-alert p {
+    margin: 0;
+
+    font-size: 13px;
+
+    opacity: 0.7;
+}
+
+
+/* ========================================
+   PLANNER CARD
+======================================== */
+
+.planner-main-card {
+    margin-bottom: 20px;
+}
+
+
+.planner-card-header {
+    margin-bottom: 20px;
+}
+
+
+.planner-card-header h3 {
+    margin: 0 0 6px;
+}
+
+
+.planner-card-header p {
+    margin: 0;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    opacity: 0.65;
+}
+
+
+.planner-task-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* ========================================
+   PLANNER TASK
+======================================== */
+
+.planner-task {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(128, 128, 128, 0.05);
+
+    border:
+        1px solid
+        rgba(128, 128, 128, 0.10);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+
+.planner-task:hover {
+    transform: translateY(-1px);
+
+    background:
+        rgba(99, 102, 241, 0.06);
+}
+
+
+.planner-task-number {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(99, 102, 241, 0.12);
+
+    color: #6366f1;
+
+    font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+
+.planner-task-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.planner-task-title {
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-weight: 700;
+}
+
+
+.planner-task-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    font-size: 12px;
+
+    opacity: 0.7;
+}
+
+
+.planner-task-reason {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 11px;
+
+    opacity: 0.6;
+}
+
+
+/* ========================================
+   QUICK WIN
+======================================== */
+
+.planner-quick-win {
+    padding: 18px;
+}
+
+
+.planner-quick-win-content {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.planner-quick-win h3 {
+    margin: 0 0 5px;
+}
+
+
+.planner-quick-win p {
+    margin: 0;
+
+    font-size: 13px;
+
+    opacity: 0.65;
+}
+
+
+.planner-quick-win-badge {
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* ========================================
+   EMPTY PLANNER
+======================================== */
+
+.planner-empty {
+    text-align: center;
+
+    padding: 35px 15px;
+}
+
+
+.planner-empty-icon {
+    font-size: 38px;
+
+    margin-bottom: 10px;
+}
+
+
+.planner-empty p {
+    margin: 0;
+
+    opacity: 0.65;
+
+    font-size: 14px;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+
+    .planner-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .planner-quick-win-content {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .planner-quick-win-badge {
+        align-self: flex-start;
+    }
+
+}
