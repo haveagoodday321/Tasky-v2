@@ -1191,99 +1191,157 @@ function updateDashboardLists() {
         0
     );
 
+/* ==================================
+   SMART PLAN
+================================== */
 
-    /* TODAY'S FOCUS */
+if (focusList) {
 
-    if (focusList) {
-
-        focusList.innerHTML = "";
-
-
-        const todayTasks =
-            tasks
-                .filter(task => {
-
-                    if (task.completed) {
-                        return false;
-                    }
-
-                    if (!task.deadline) {
-                        return false;
-                    }
+    focusList.innerHTML = "";
 
 
-                    const deadline =
-                        new Date(
-                            `${task.deadline}T00:00:00`
-                        );
+    const recommendedTasks =
+        typeof getTopPlannedTasks === "function"
+            ? getTopPlannedTasks(
+                tasks,
+                3
+            )
+            : [];
 
 
-                    return (
-                        deadline.getTime() ===
-                        today.getTime()
+    if (
+        recommendedTasks.length === 0
+    ) {
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+        empty.className =
+            "smart-plan-empty";
+
+
+        empty.innerHTML = `
+
+            <span>
+                🎯
+            </span>
+
+            <p>
+                Nothing needs your attention right now.
+            </p>
+
+        `;
+
+
+        focusList.appendChild(
+            empty
+        );
+
+
+    } else {
+
+        recommendedTasks.forEach(
+            (task, index) => {
+
+                const item =
+                    document.createElement(
+                        "div"
                     );
 
-                })
-                .sort((a, b) => {
-
-                    const order = {
-
-                        high: 3,
-                        medium: 2,
-                        low: 1
-
-                    };
+                item.className =
+                    "smart-plan-item";
 
 
-                    return (
-                        (order[
-                            b.priority.toLowerCase()
-                        ] || 0)
+                const reason =
+                    typeof getPlannerReason ===
+                    "function"
 
-                        -
+                        ? getPlannerReason(task)
 
-                        (order[
-                            a.priority.toLowerCase()
-                        ] || 0)
-                    );
-
-                });
+                        : "Recommended next task";
 
 
-        if (todayTasks.length === 0) {
+                const duration =
+                    typeof formatDuration ===
+                    "function"
 
-            const li =
-                document.createElement("li");
+                        ? formatDuration(
+                            task.duration
+                        )
 
-            li.textContent =
-                "Nothing planned for today 🎉";
+                        : `${task.duration || 60} min`;
 
-            focusList.appendChild(li);
 
-        } else {
+                item.innerHTML = `
 
-            todayTasks.forEach(task => {
+                    <div class="smart-plan-number">
 
-                const li =
-                    document.createElement("li");
+                        ${index + 1}
 
-                li.textContent =
-                    task.text;
+                    </div>
 
-                li.classList.add(
-                    `priority-${task.priority.toLowerCase()}`
+
+                    <div class="smart-plan-content">
+
+                        <strong>
+
+                            ${escapeHTML(
+                                task.text
+                            )}
+
+                        </strong>
+
+
+                        <div class="smart-plan-meta">
+
+                            <span>
+                                ${
+                                    task.priority === "High"
+                                        ? "🔴"
+                                        : task.priority === "Medium"
+                                            ? "🟠"
+                                            : "🟢"
+                                }
+                                ${escapeHTML(
+                                    task.priority ||
+                                    "Medium"
+                                )}
+                            </span>
+
+
+                            <span>
+                                ⏱️ ${duration}
+                            </span>
+
+                        </div>
+
+
+                        <small>
+
+                            ${escapeHTML(
+                                reason
+                            )}
+
+                        </small>
+
+                    </div>
+
+                `;
+
+
+                focusList.appendChild(
+                    item
                 );
 
-                focusList.appendChild(li);
-
-            });
-
-        }
+            }
+        );
 
     }
 
-
-    /* UPCOMING */
+}
+    
 
     if (upcomingList) {
 
