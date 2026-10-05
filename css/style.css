@@ -1094,3 +1094,127 @@ body.light-theme .progress{
     }
 
 }
+
+/* ========================================
+   BUILD DAY CONTROLS
+======================================== */
+
+.build-day-time {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        8px;
+
+}
+
+
+.build-day-edit-btn,
+.build-day-remove-btn {
+
+    border:
+        none;
+
+    cursor:
+        pointer;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.build-day-edit-btn {
+
+    width:
+        30px;
+
+    height:
+        30px;
+
+    border-radius:
+        8px;
+
+    background:
+        var(--surface);
+
+}
+
+
+.build-day-remove-btn {
+
+    width:
+        30px;
+
+    height:
+        30px;
+
+    border-radius:
+        8px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text-secondary);
+
+}
+
+
+.build-day-edit-btn:hover,
+.build-day-remove-btn:hover {
+
+    transform:
+        scale(1.08);
+
+    opacity:
+        0.8;
+
+}
+
+
+.build-day-item {
+
+    position:
+        relative;
+
+}
+
+
+.build-day-task {
+
+    flex:
+        1;
+
+}
+
+
+@media (
+    max-width: 600px
+) {
+
+    .build-day-time {
+
+        width:
+            100%;
+
+    }
+
+}
