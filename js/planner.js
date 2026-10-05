@@ -1130,12 +1130,15 @@ function buildMyDay() {
     ================================== */
 
     const plannedTasks =
-        getSmartPlan(
-            tasks
-        ).slice(
-            0,
-            maxTasks
-        );
+    getSmartPlan(
+        tasks.filter(
+            task =>
+                !task._excludedFromToday
+        )
+    ).slice(
+        0,
+        maxTasks
+    );
 
 
     panel.style.display =
@@ -1308,47 +1311,68 @@ function buildMyDay() {
                 "build-day-item";
 
 
-            item.innerHTML = `
+   item.innerHTML = `
 
-                <div
-                    class="build-day-time">
+    <div
+        class="build-day-time">
 
-                    ${formatPlannerTimeOfDay(
-                        startTime
-                    )}
-                    –
-                    ${formatPlannerTimeOfDay(
-                        taskEnd
-                    )}
+        <span>
+            ${formatPlannerTimeOfDay(
+                startTime
+            )}
+            –
+            ${formatPlannerTimeOfDay(
+                taskEnd
+            )}
+        </span>
 
-                </div>
+        <button
+            class="build-day-edit-btn"
+            type="button"
+            data-task-id="${task.id}">
 
+            ✏️
 
-                <div
-                    class="build-day-task">
+        </button>
 
-                    <strong>
-
-                        ${scheduledTasks + 1}.
-                        ${escapeHTML(
-                            task.text
-                        )}
-
-                    </strong>
+    </div>
 
 
-                    <span>
+    <div
+        class="build-day-task">
 
-                        ⏱️
-                        ${formatPlannerTime(
-                            duration
-                        )}
+        <strong>
 
-                    </span>
+            ${scheduledTasks + 1}.
+            ${escapeHTML(
+                task.text
+            )}
 
-                </div>
+        </strong>
 
-            `;
+
+        <span>
+
+            ⏱️
+            ${formatPlannerTime(
+                duration
+            )}
+
+        </span>
+
+    </div>
+
+
+    <button
+        class="build-day-remove-btn"
+        type="button"
+        data-task-id="${task.id}">
+
+        ✕
+
+    </button>
+
+`;
 
 
             schedule.appendChild(
@@ -1412,7 +1436,108 @@ function buildMyDay() {
 
 }
 
+/* ======================================
+   EDIT BUILD-DAY TASK
+====================================== */
 
+function editBuildDayTask(
+    taskId
+) {
+
+    const task =
+        tasks.find(
+            item =>
+                String(item.id) ===
+                String(taskId)
+        );
+
+
+    if (!task) {
+        return;
+    }
+
+
+    const newDuration =
+        prompt(
+            `How many minutes should "${task.text}" take?`,
+            task.duration || 60
+        );
+
+
+    if (
+        newDuration === null
+    ) {
+        return;
+    }
+
+
+    const duration =
+        Number(
+            newDuration
+        );
+
+
+    if (
+        !Number.isFinite(duration) ||
+        duration <= 0
+    ) {
+
+        alert(
+            "Please enter a valid duration."
+        );
+
+        return;
+
+    }
+
+
+    task.duration =
+        Math.round(
+            duration
+        );
+
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(
+            tasks
+        )
+    );
+
+
+    buildMyDay();
+
+}
+
+
+/* ======================================
+   REMOVE BUILD-DAY TASK
+====================================== */
+
+function removeBuildDayTask(
+    taskId
+) {
+
+    const task =
+        tasks.find(
+            item =>
+                String(item.id) ===
+                String(taskId)
+        );
+
+
+    if (!task) {
+        return;
+    }
+
+
+    task._excludedFromToday =
+        true;
+
+
+    buildMyDay();
+
+}
 
 
 /* ======================================
@@ -1495,3 +1620,40 @@ document.addEventListener(
 
     }
 );
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const editButton =
+            event.target.closest(
+                ".build-day-edit-btn"
+            );
+
+
+        const removeButton =
+            event.target.closest(
+                ".build-day-remove-btn"
+            );
+
+
+        if (editButton) {
+
+            editBuildDayTask(
+                editButton.dataset.taskId
+            );
+
+        }
+
+
+        if (removeButton) {
+
+            removeBuildDayTask(
+                removeButton.dataset.taskId
+            );
+
+        }
+
+    }
+);
+
