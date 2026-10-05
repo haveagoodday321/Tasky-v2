@@ -162,6 +162,15 @@ function updateCurrentPage(pageId) {
 
     }
 
+   if (
+    pageId === "plannerSection" &&
+    typeof renderSmartPlanner === "function"
+) {
+
+    renderSmartPlanner();
+
+   }
+
 }
 
 
