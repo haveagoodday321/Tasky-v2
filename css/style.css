@@ -918,3 +918,179 @@ body.light-theme .progress{
     }
 
 }
+
+/* ========================================
+   BUILD MY DAY SETTINGS
+======================================== */
+
+.build-day-settings {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap:
+        12px;
+
+    padding:
+        16px;
+
+    margin-bottom:
+        20px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        16px;
+
+    background:
+        var(--surface2);
+
+}
+
+
+.build-day-setting {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+}
+
+
+.build-day-setting label {
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    color:
+        var(--text-secondary);
+
+}
+
+
+.build-day-setting input,
+.build-day-setting select {
+
+    width:
+        100%;
+
+    box-sizing:
+        border-box;
+
+    padding:
+        10px 11px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        10px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+    font: inherit;
+
+}
+
+
+.build-day-rebuild-btn {
+
+    align-self:
+        end;
+
+    min-height:
+        42px;
+
+    border:
+        none;
+
+    border-radius:
+        10px;
+
+    padding:
+        10px 14px;
+
+    background:
+        var(--primary);
+
+    color:
+        white;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.build-day-rebuild-btn:hover {
+
+    transform:
+        translateY(-1px);
+
+    opacity:
+        0.9;
+
+}
+
+
+/* ========================================
+   RESPONSIVE BUILD SETTINGS
+======================================== */
+
+@media (
+    max-width: 800px
+) {
+
+    .build-day-settings {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .build-day-rebuild-btn {
+
+        width:
+            100%;
+
+    }
+
+}
+
+
+@media (
+    max-width: 500px
+) {
+
+    .build-day-settings {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
