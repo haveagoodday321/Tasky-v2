@@ -1495,11 +1495,13 @@ if (viewSmartPlanBtn) {
         function () {
 
             if (
-                typeof openSmartPlanner ===
+                typeof showPage ===
                 "function"
             ) {
 
-                openSmartPlanner();
+                showPage(
+                    "plannerSection"
+                );
 
             }
 
