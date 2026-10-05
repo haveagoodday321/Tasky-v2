@@ -987,3 +987,308 @@ document.addEventListener(
 
     }
 );
+
+/* ======================================
+   BUILD MY DAY
+====================================== */
+
+function buildMyDay() {
+
+    const panel =
+        document.getElementById(
+            "buildMyDayPanel"
+        );
+
+    const schedule =
+        document.getElementById(
+            "buildDaySchedule"
+        );
+
+    const totalTime =
+        document.getElementById(
+            "buildDayTotalTime"
+        );
+
+    if (
+        !panel ||
+        !schedule ||
+        !totalTime
+    ) {
+        return;
+    }
+
+
+    const plannedTasks =
+        getSmartPlan(
+            tasks
+        ).slice(
+            0,
+            6
+        );
+
+
+    panel.style.display = "block";
+
+
+    if (
+        plannedTasks.length === 0
+    ) {
+
+        schedule.innerHTML = `
+            
+            <div class="build-day-empty">
+
+                <div>
+                    🎉
+                </div>
+
+                <p>
+                    You have no unfinished tasks
+                    to schedule.
+                </p>
+
+            </div>
+
+        `;
+
+        totalTime.textContent =
+            "0m planned";
+
+        return;
+
+    }
+
+
+    let currentMinutes =
+        16 * 60;
+
+
+    let totalMinutes = 0;
+
+
+    schedule.innerHTML = "";
+
+
+    plannedTasks.forEach(
+        (
+            task,
+            index
+        ) => {
+
+            const duration =
+                Number(
+                    task.duration
+                ) || 60;
+
+
+            const startMinutes =
+                currentMinutes;
+
+
+            const endMinutes =
+                startMinutes +
+                duration;
+
+
+            const startTime =
+                formatPlannerTimeOfDay(
+                    startMinutes
+                );
+
+
+            const endTime =
+                formatPlannerTimeOfDay(
+                    endMinutes
+                );
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "build-day-item";
+
+
+            item.innerHTML = `
+
+                <div class="build-day-time">
+
+                    ${startTime}
+                    –
+                    ${endTime}
+
+                </div>
+
+
+                <div class="build-day-task">
+
+                    <strong>
+
+                        ${index + 1}.
+                        ${escapeHTML(
+                            task.text
+                        )}
+
+                    </strong>
+
+
+                    <span>
+
+                        ⏱️
+                        ${formatPlannerTime(
+                            duration
+                        )}
+
+                    </span>
+
+                </div>
+
+            `;
+
+
+            schedule.appendChild(
+                item
+            );
+
+
+            currentMinutes =
+                endMinutes;
+
+
+            totalMinutes +=
+                duration;
+
+
+            /*
+             * Add a 15-minute break
+             * between tasks.
+             */
+
+            if (
+                index <
+                plannedTasks.length - 1
+            ) {
+
+                const breakItem =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                breakItem.className =
+                    "build-day-break";
+
+
+                breakItem.innerHTML = `
+
+                    <span>
+                        ☕
+                    </span>
+
+                    <span>
+                        ${formatPlannerTimeOfDay(
+                            currentMinutes
+                        )}
+                        –
+                        ${formatPlannerTimeOfDay(
+                            currentMinutes + 15
+                        )}
+                    </span>
+
+                    <strong>
+                        Break
+                    </strong>
+
+                `;
+
+
+                schedule.appendChild(
+                    breakItem
+                );
+
+
+                currentMinutes +=
+                    15;
+
+            }
+
+        }
+    );
+
+
+    totalTime.textContent =
+        `${formatPlannerTime(
+            totalMinutes
+        )} planned`;
+
+}
+
+
+/* ======================================
+   TIME FORMATTER
+====================================== */
+
+function formatPlannerTimeOfDay(
+    totalMinutes
+) {
+
+    const hours =
+        Math.floor(
+            totalMinutes / 60
+        );
+
+    const minutes =
+        totalMinutes % 60;
+
+
+    const displayHour =
+        hours > 12
+            ? hours - 12
+            : hours;
+
+
+    const suffix =
+        hours >= 12
+            ? "PM"
+            : "AM";
+
+
+    return `${displayHour}:${String(
+        minutes
+    ).padStart(
+        2,
+        "0"
+    )} ${suffix}`;
+
+}
+
+
+/* ======================================
+   BUILD MY DAY BUTTON
+====================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const button =
+            document.getElementById(
+                "buildMyDayBtn"
+            );
+
+
+        if (!button) {
+            return;
+        }
+
+
+        button.addEventListener(
+            "click",
+            buildMyDay
+        );
+
+    }
+);
