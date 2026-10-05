@@ -534,6 +534,124 @@ id="categoryFilter">
     class="card build-day-panel"
     style="display: none;">
 
+    <!-- ========================================
+     DAY SETTINGS
+======================================== -->
+
+<div class="build-day-settings">
+
+    <div class="build-day-setting">
+
+        <label for="dayStartTime">
+            🕓 Start time
+        </label>
+
+        <input
+            id="dayStartTime"
+            type="time"
+            value="16:00">
+
+    </div>
+
+
+    <div class="build-day-setting">
+
+        <label for="dayEndTime">
+            🏁 End time
+        </label>
+
+        <input
+            id="dayEndTime"
+            type="time"
+            value="21:00">
+
+    </div>
+
+
+    <div class="build-day-setting">
+
+        <label for="breakDuration">
+            ☕ Break length
+        </label>
+
+        <select id="breakDuration">
+
+            <option value="5">
+                5 minutes
+            </option>
+
+            <option
+                value="10">
+                10 minutes
+            </option>
+
+            <option
+                value="15"
+                selected>
+                15 minutes
+            </option>
+
+            <option
+                value="20">
+                20 minutes
+            </option>
+
+            <option
+                value="30">
+                30 minutes
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="build-day-setting">
+
+        <label for="maxTasksPerDay">
+            📋 Maximum tasks
+        </label>
+
+        <select id="maxTasksPerDay">
+
+            <option value="3">
+                3 tasks
+            </option>
+
+            <option
+                value="4"
+                selected>
+                4 tasks
+            </option>
+
+            <option value="5">
+                5 tasks
+            </option>
+
+            <option value="6">
+                6 tasks
+            </option>
+
+            <option value="8">
+                8 tasks
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button
+        id="rebuildDayBtn"
+        class="build-day-rebuild-btn"
+        type="button">
+
+        🔄 Build Schedule
+
+    </button>
+
+</div>
+
     <div class="build-day-header">
 
         <div>
