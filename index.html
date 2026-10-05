@@ -480,25 +480,32 @@ id="categoryFilter">
 
     <!-- RECOMMENDED PLAN -->
 
-    <div class="card planner-main-card">
+<div class="planner-card-header">
 
-        <div class="planner-card-header">
+    <div>
 
-            <div>
+        <h3>
+            ✨ Recommended Order
+        </h3>
 
-                <h3>
-                    ✨ Recommended Order
-                </h3>
+        <p>
+            Tasky has ranked your unfinished tasks
+            using deadlines, priority, duration and
+            subtasks.
+        </p>
 
-                <p>
-                    Tasky has ranked your unfinished tasks
-                    using deadlines, priority, duration and
-                    subtasks.
-                </p>
+    </div>
 
-            </div>
+    <button
+        id="buildMyDayBtn"
+        class="planner-build-day-btn"
+        type="button">
 
-        </div>
+        📅 Build My Day
+
+    </button>
+
+</div>
 
 
         <div
@@ -517,6 +524,49 @@ id="categoryFilter">
         class="card planner-quick-win">
 
     </div>
+
+    <!-- ========================================
+     BUILD MY DAY
+======================================== -->
+
+<div
+    id="buildMyDayPanel"
+    class="card build-day-panel"
+    style="display: none;">
+
+    <div class="build-day-header">
+
+        <div>
+
+            <h3>
+                📅 My Day
+            </h3>
+
+            <p>
+                Tasky has created a suggested schedule
+                from your highest-priority tasks.
+            </p>
+
+        </div>
+
+        <span
+            id="buildDayTotalTime"
+            class="build-day-total">
+
+            0m planned
+
+        </span>
+
+    </div>
+
+
+    <div
+        id="buildDaySchedule"
+        class="build-day-schedule">
+
+    </div>
+
+</div>
 
 </section>
 
