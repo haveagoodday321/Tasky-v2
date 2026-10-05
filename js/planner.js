@@ -961,33 +961,16 @@ function renderPlannerQuickWin(
 
 function openSmartPlanner() {
 
-    const plannerSection =
-        document.getElementById(
+    if (
+        typeof showPage ===
+        "function"
+    ) {
+
+        showPage(
             "plannerSection"
         );
 
-
-    if (!plannerSection) return;
-
-
-    document
-        .querySelectorAll(
-            ".app-section"
-        )
-        .forEach(
-            section =>
-                section.classList.remove(
-                    "active"
-                )
-        );
-
-
-    plannerSection.classList.add(
-        "active"
-    );
-
-
-    renderSmartPlanner();
+    }
 
 }
 
