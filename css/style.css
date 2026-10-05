@@ -560,3 +560,43 @@ body.light-theme .navBtn.active{
 body.light-theme .progress{
     background:#E2E8F0;
 }
+
+/* ========================================
+   SIX-ITEM NAVIGATION
+======================================== */
+
+.bottom-nav {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    gap: 4px;
+}
+
+
+.bottom-nav .navBtn {
+    min-width: 0;
+}
+
+
+.bottom-nav .nav-label {
+    font-size: 10px;
+}
+
+
+@media (max-width: 420px) {
+
+    .bottom-nav {
+        gap: 1px;
+    }
+
+    .bottom-nav .nav-label {
+        font-size: 9px;
+    }
+
+    .bottom-nav .nav-icon {
+        font-size: 17px;
+    }
+
+}
