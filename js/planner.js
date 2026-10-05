@@ -1009,25 +1009,137 @@ function buildMyDay() {
             "buildDayTotalTime"
         );
 
+    const startInput =
+        document.getElementById(
+            "dayStartTime"
+        );
+
+    const endInput =
+        document.getElementById(
+            "dayEndTime"
+        );
+
+    const breakInput =
+        document.getElementById(
+            "breakDuration"
+        );
+
+    const maxTasksInput =
+        document.getElementById(
+            "maxTasksPerDay"
+        );
+
+
     if (
         !panel ||
         !schedule ||
-        !totalTime
+        !totalTime ||
+        !startInput ||
+        !endInput ||
+        !breakInput ||
+        !maxTasksInput
     ) {
+
         return;
+
     }
 
+
+    /* ==================================
+       READ SETTINGS
+    ================================== */
+
+    const startParts =
+        startInput.value
+            .split(":")
+            .map(Number);
+
+    const endParts =
+        endInput.value
+            .split(":")
+            .map(Number);
+
+
+    let currentMinutes =
+        (
+            startParts[0] * 60
+        ) +
+        startParts[1];
+
+
+    const endMinutes =
+        (
+            endParts[0] * 60
+        ) +
+        endParts[1];
+
+
+    const breakMinutes =
+        Number(
+            breakInput.value
+        );
+
+
+    const maxTasks =
+        Number(
+            maxTasksInput.value
+        );
+
+
+    /* ==================================
+       VALIDATE TIME
+    ================================== */
+
+    if (
+        endMinutes <=
+        currentMinutes
+    ) {
+
+        panel.style.display =
+            "block";
+
+
+        schedule.innerHTML = `
+
+            <div class="build-day-empty">
+
+                <div>
+                    ⚠️
+                </div>
+
+                <p>
+                    Your end time must be
+                    later than your start time.
+                </p>
+
+            </div>
+
+        `;
+
+
+        totalTime.textContent =
+            "Invalid schedule";
+
+        return;
+
+    }
+
+
+    /* ==================================
+       GET TASKS
+    ================================== */
 
     const plannedTasks =
         getSmartPlan(
             tasks
         ).slice(
             0,
-            6
+            maxTasks
         );
 
 
-    panel.style.display = "block";
+    panel.style.display =
+        "block";
 
 
     if (
@@ -1035,7 +1147,7 @@ function buildMyDay() {
     ) {
 
         schedule.innerHTML = `
-            
+
             <div class="build-day-empty">
 
                 <div>
@@ -1051,6 +1163,7 @@ function buildMyDay() {
 
         `;
 
+
         totalTime.textContent =
             "0m planned";
 
@@ -1059,11 +1172,15 @@ function buildMyDay() {
     }
 
 
-    let currentMinutes =
-        16 * 60;
+    /* ==================================
+       BUILD SCHEDULE
+    ================================== */
 
+    let totalTaskMinutes =
+        0;
 
-    let totalMinutes = 0;
+    let scheduledTasks =
+        0;
 
 
     schedule.innerHTML = "";
@@ -1081,25 +1198,104 @@ function buildMyDay() {
                 ) || 60;
 
 
-            const startMinutes =
+            /*
+             * Check whether the task
+             * fits inside the user's day.
+             */
+
+            const remainingMinutes =
+                endMinutes -
                 currentMinutes;
 
 
-            const endMinutes =
-                startMinutes +
-                duration;
+            const requiredMinutes =
+                duration +
+                (
+                    scheduledTasks > 0
+                        ? breakMinutes
+                        : 0
+                );
+
+
+            if (
+                requiredMinutes >
+                remainingMinutes
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Add break before
+             * every task except first.
+             */
+
+            if (
+                scheduledTasks > 0
+            ) {
+
+                const breakStart =
+                    currentMinutes;
+
+
+                const breakEnd =
+                    currentMinutes +
+                    breakMinutes;
+
+
+                const breakItem =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                breakItem.className =
+                    "build-day-break";
+
+
+                breakItem.innerHTML = `
+
+                    <span>
+                        ☕
+                    </span>
+
+                    <span>
+                        ${formatPlannerTimeOfDay(
+                            breakStart
+                        )}
+                        –
+                        ${formatPlannerTimeOfDay(
+                            breakEnd
+                        )}
+                    </span>
+
+                    <strong>
+                        Break
+                    </strong>
+
+                `;
+
+
+                schedule.appendChild(
+                    breakItem
+                );
+
+
+                currentMinutes =
+                    breakEnd;
+
+            }
 
 
             const startTime =
-                formatPlannerTimeOfDay(
-                    startMinutes
-                );
+                currentMinutes;
 
 
-            const endTime =
-                formatPlannerTimeOfDay(
-                    endMinutes
-                );
+            const taskEnd =
+                startTime +
+                duration;
 
 
             const item =
@@ -1114,20 +1310,26 @@ function buildMyDay() {
 
             item.innerHTML = `
 
-                <div class="build-day-time">
+                <div
+                    class="build-day-time">
 
-                    ${startTime}
+                    ${formatPlannerTimeOfDay(
+                        startTime
+                    )}
                     –
-                    ${endTime}
+                    ${formatPlannerTimeOfDay(
+                        taskEnd
+                    )}
 
                 </div>
 
 
-                <div class="build-day-task">
+                <div
+                    class="build-day-task">
 
                     <strong>
 
-                        ${index + 1}.
+                        ${scheduledTasks + 1}.
                         ${escapeHTML(
                             task.text
                         )}
@@ -1155,76 +1357,62 @@ function buildMyDay() {
 
 
             currentMinutes =
-                endMinutes;
+                taskEnd;
 
 
-            totalMinutes +=
+            totalTaskMinutes +=
                 duration;
 
 
-            /*
-             * Add a 15-minute break
-             * between tasks.
-             */
-
-            if (
-                index <
-                plannedTasks.length - 1
-            ) {
-
-                const breakItem =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                breakItem.className =
-                    "build-day-break";
-
-
-                breakItem.innerHTML = `
-
-                    <span>
-                        ☕
-                    </span>
-
-                    <span>
-                        ${formatPlannerTimeOfDay(
-                            currentMinutes
-                        )}
-                        –
-                        ${formatPlannerTimeOfDay(
-                            currentMinutes + 15
-                        )}
-                    </span>
-
-                    <strong>
-                        Break
-                    </strong>
-
-                `;
-
-
-                schedule.appendChild(
-                    breakItem
-                );
-
-
-                currentMinutes +=
-                    15;
-
-            }
+            scheduledTasks++;
 
         }
     );
 
 
+    /* ==================================
+       RESULT
+    ================================== */
+
+    if (
+        scheduledTasks === 0
+    ) {
+
+        schedule.innerHTML = `
+
+            <div class="build-day-empty">
+
+                <div>
+                    ⏳
+                </div>
+
+                <p>
+                    Your available time is
+                    too short for the selected
+                    tasks.
+                </p>
+
+            </div>
+
+        `;
+
+
+        totalTime.textContent =
+            "No tasks scheduled";
+
+        return;
+
+    }
+
+
     totalTime.textContent =
         `${formatPlannerTime(
-            totalMinutes
+            totalTaskMinutes
         )} planned`;
 
 }
+
+
 
 
 /* ======================================
@@ -1280,15 +1468,30 @@ document.addEventListener(
             );
 
 
-        if (!button) {
-            return;
+        const rebuildButton =
+            document.getElementById(
+                "rebuildDayBtn"
+            );
+
+
+        if (button) {
+
+            button.addEventListener(
+                "click",
+                buildMyDay
+            );
+
         }
 
 
-        button.addEventListener(
-            "click",
-            buildMyDay
-        );
+        if (rebuildButton) {
+
+            rebuildButton.addEventListener(
+                "click",
+                buildMyDay
+            );
+
+        }
 
     }
 );
