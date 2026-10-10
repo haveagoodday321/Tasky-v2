@@ -1218,3 +1218,66 @@ body.light-theme .progress{
     }
 
 }
+
+
+/* ========================================
+   SAVED DAILY PLAN
+======================================== */
+
+.build-day-header-actions {
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+
+}
+
+.build-day-save-status {
+
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+
+}
+
+.build-day-save-btn {
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease,
+                opacity 0.2s ease;
+
+}
+
+.build-day-save-btn:hover {
+
+    transform: translateY(-1px);
+    opacity: 0.85;
+
+}
+
+@media (max-width: 600px) {
+
+    .build-day-header-actions {
+
+        justify-content: flex-start;
+        width: 100%;
+
+    }
+
+    .build-day-save-btn {
+
+        flex: 1;
+
+    }
+
+}
+
