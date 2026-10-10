@@ -1129,12 +1129,21 @@ function buildMyDay() {
        GET TASKS
     ================================== */
 
-    const plannedTasks =
+    const excludedTaskIds =
+    getBuildDayExcludedTasks();
+
+const availableTasks =
+    tasks.filter(
+        task =>
+            !excludedTaskIds.includes(
+                String(task.id)
+            ) &&
+            !task.completed
+    );
+
+const plannedTasks =
     getSmartPlan(
-        tasks.filter(
-            task =>
-                !task._excludedFromToday
-        )
+        availableTasks
     ).slice(
         0,
         maxTasks
@@ -1169,6 +1178,8 @@ function buildMyDay() {
 
         totalTime.textContent =
             "0m planned";
+
+       saveBuildDayState();
 
         return;
 
@@ -1424,6 +1435,8 @@ function buildMyDay() {
         totalTime.textContent =
             "No tasks scheduled";
 
+       saveBuildDayState();
+
         return;
 
     }
@@ -1434,7 +1447,394 @@ function buildMyDay() {
             totalTaskMinutes
         )} planned`;
 
+   saveBuildDayState();
+
 }
+
+
+/* ======================================
+   BUILD DAY PERSISTENCE
+====================================== */
+
+const BUILD_DAY_STORAGE_KEY =
+    "taskyDailyPlan";
+
+const BUILD_DAY_EXCLUDED_KEY =
+    "taskyDailyPlanExcludedTasks";
+
+
+function getBuildDayExcludedTasks() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                BUILD_DAY_EXCLUDED_KEY
+            );
+
+        const ids =
+            saved
+                ? JSON.parse(saved)
+                : [];
+
+        return Array.isArray(ids)
+            ? ids.map(String)
+            : [];
+
+    } catch (error) {
+
+        console.error(
+            "Could not read excluded tasks:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+function saveBuildDayState() {
+
+    const schedule =
+        document.getElementById(
+            "buildDaySchedule"
+        );
+
+    const totalTime =
+        document.getElementById(
+            "buildDayTotalTime"
+        );
+
+    const status =
+        document.getElementById(
+            "buildDaySaveStatus"
+        );
+
+    const startInput =
+        document.getElementById(
+            "dayStartTime"
+        );
+
+    const endInput =
+        document.getElementById(
+            "dayEndTime"
+        );
+
+    const breakInput =
+        document.getElementById(
+            "breakDuration"
+        );
+
+    const maxTasksInput =
+        document.getElementById(
+            "maxTasksPerDay"
+        );
+
+
+    if (
+        !schedule ||
+        !totalTime ||
+        !startInput ||
+        !endInput ||
+        !breakInput ||
+        !maxTasksInput
+    ) {
+
+        return false;
+
+    }
+
+
+    const plan = {
+
+        date:
+            new Date()
+                .toLocaleDateString("en-CA"),
+
+        updatedAt:
+            new Date().toISOString(),
+
+        settings: {
+
+            startTime:
+                startInput.value,
+
+            endTime:
+                endInput.value,
+
+            breakDuration:
+                breakInput.value,
+
+            maxTasks:
+                maxTasksInput.value
+
+        },
+
+        excludedTaskIds:
+            getBuildDayExcludedTasks(),
+
+        scheduleHTML:
+            schedule.innerHTML,
+
+        totalTime:
+            totalTime.textContent
+
+    };
+
+
+    try {
+
+        localStorage.setItem(
+            BUILD_DAY_STORAGE_KEY,
+            JSON.stringify(plan)
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                "✓ Saved on this device";
+
+        }
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Could not save daily plan:",
+            error
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                "⚠️ Could not save plan";
+
+        }
+
+        return false;
+
+    }
+
+}
+
+
+function restoreBuildDayState() {
+
+    let plan;
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                BUILD_DAY_STORAGE_KEY
+            );
+
+        if (!saved) {
+            return;
+        }
+
+        plan = JSON.parse(saved);
+
+    } catch (error) {
+
+        console.error(
+            "Could not restore daily plan:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !plan ||
+        !plan.settings
+    ) {
+
+        return;
+
+    }
+
+
+    const panel =
+        document.getElementById(
+            "buildMyDayPanel"
+        );
+
+    const schedule =
+        document.getElementById(
+            "buildDaySchedule"
+        );
+
+    const totalTime =
+        document.getElementById(
+            "buildDayTotalTime"
+        );
+
+    const status =
+        document.getElementById(
+            "buildDaySaveStatus"
+        );
+
+
+    if (
+        !panel ||
+        !schedule ||
+        !totalTime
+    ) {
+
+        return;
+
+    }
+
+
+    const startInput =
+        document.getElementById(
+            "dayStartTime"
+        );
+
+    const endInput =
+        document.getElementById(
+            "dayEndTime"
+        );
+
+    const breakInput =
+        document.getElementById(
+            "breakDuration"
+        );
+
+    const maxTasksInput =
+        document.getElementById(
+            "maxTasksPerDay"
+        );
+
+
+    if (startInput && plan.settings.startTime) {
+
+        startInput.value =
+            plan.settings.startTime;
+
+    }
+
+    if (endInput && plan.settings.endTime) {
+
+        endInput.value =
+            plan.settings.endTime;
+
+    }
+
+    if (breakInput && plan.settings.breakDuration) {
+
+        breakInput.value =
+            plan.settings.breakDuration;
+
+    }
+
+    if (maxTasksInput && plan.settings.maxTasks) {
+
+        maxTasksInput.value =
+            plan.settings.maxTasks;
+
+    }
+
+
+    const today =
+        new Date()
+            .toLocaleDateString("en-CA");
+
+
+    /*
+     * Restore the saved plan only for
+     * the day on which it was created.
+     */
+
+    if (plan.date !== today) {
+
+        if (status) {
+
+            status.textContent =
+                "New day — build today's plan";
+
+        }
+
+        return;
+
+    }
+
+
+    try {
+
+        localStorage.setItem(
+            BUILD_DAY_EXCLUDED_KEY,
+            JSON.stringify(
+                plan.excludedTaskIds || []
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not restore excluded tasks:",
+            error
+        );
+
+    }
+
+
+    schedule.innerHTML =
+        plan.scheduleHTML || "";
+
+
+    totalTime.textContent =
+        plan.totalTime || "0m planned";
+
+
+    panel.style.display =
+        "block";
+
+
+    if (status) {
+
+        status.textContent =
+            "✓ Restored saved plan";
+
+    }
+
+}
+
+
+/* ======================================
+   REBUILD DAILY PLAN
+====================================== */
+
+function rebuildBuildMyDay() {
+
+    try {
+
+        localStorage.removeItem(
+            BUILD_DAY_EXCLUDED_KEY
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not reset excluded tasks:",
+            error
+        );
+
+    }
+
+
+    buildMyDay();
+
+}
+
 
 /* ======================================
    EDIT BUILD-DAY TASK
@@ -1514,30 +1914,51 @@ function editBuildDayTask(
    REMOVE BUILD-DAY TASK
 ====================================== */
 
-function removeBuildDayTask(
-    taskId
-) {
 
-    const task =
-        tasks.find(
-            item =>
-                String(item.id) ===
-                String(taskId)
-        );
+function removeBuildDayTask(taskId) {
+
+    const excludedTaskIds =
+        getBuildDayExcludedTasks();
 
 
-    if (!task) {
-        return;
+    const id =
+        String(taskId);
+
+
+    if (
+        !excludedTaskIds.includes(id)
+    ) {
+
+        excludedTaskIds.push(id);
+
     }
 
 
-    task._excludedFromToday =
-        true;
+    try {
+
+        localStorage.setItem(
+            BUILD_DAY_EXCLUDED_KEY,
+            JSON.stringify(
+                excludedTaskIds
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not save removed task:",
+            error
+        );
+
+        return;
+
+    }
 
 
     buildMyDay();
 
 }
+
 
 
 /* ======================================
@@ -1583,6 +2004,7 @@ function formatPlannerTimeOfDay(
    BUILD MY DAY BUTTON
 ====================================== */
 
+
 document.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -1592,10 +2014,14 @@ document.addEventListener(
                 "buildMyDayBtn"
             );
 
-
         const rebuildButton =
             document.getElementById(
                 "rebuildDayBtn"
+            );
+
+        const saveButton =
+            document.getElementById(
+                "saveBuildDayBtn"
             );
 
 
@@ -1603,7 +2029,15 @@ document.addEventListener(
 
             button.addEventListener(
                 "click",
-                buildMyDay
+                () => {
+
+                    document.getElementById(
+                        "buildMyDayPanel"
+                    ).style.display = "block";
+
+                    buildMyDay();
+
+                }
             );
 
         }
@@ -1613,13 +2047,27 @@ document.addEventListener(
 
             rebuildButton.addEventListener(
                 "click",
-                buildMyDay
+                rebuildBuildMyDay
             );
 
         }
 
+
+        if (saveButton) {
+
+            saveButton.addEventListener(
+                "click",
+                saveBuildDayState
+            );
+
+        }
+
+
+        restoreBuildDayState();
+
     }
 );
+
 
 document.addEventListener(
     "click",
