@@ -992,6 +992,33 @@ document.addEventListener(
    BUILD MY DAY
 ====================================== */
 
+
+/* ======================================
+   STRUCTURED DAILY SCHEDULE
+====================================== */
+
+let currentBuildDayBlocks = [];
+
+
+function getLocalDateKey(date = new Date()) {
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
 function buildMyDay() {
 
     const panel =
@@ -1190,16 +1217,15 @@ const plannedTasks =
        BUILD SCHEDULE
     ================================== */
 
-    let totalTaskMinutes =
-        0;
+    
+let totalTaskMinutes = 0;
 
-    let scheduledTasks =
-        0;
+let scheduledTasks = 0;
 
+currentBuildDayBlocks = [];
 
-    schedule.innerHTML = "";
-
-
+schedule.innerHTML = "";
+   
     plannedTasks.forEach(
         (
             task,
@@ -1250,23 +1276,44 @@ const plannedTasks =
                 scheduledTasks > 0
             ) {
 
-                const breakStart =
-                    currentMinutes;
+
+const breakStart =
+    currentMinutes;
+
+const breakEnd =
+    currentMinutes + breakMinutes;
 
 
-                const breakEnd =
-                    currentMinutes +
-                    breakMinutes;
+currentBuildDayBlocks.push({
+
+    id:
+        `break-${getLocalDateKey()}-${scheduledTasks}`,
+
+    type:
+        "break",
+
+    date:
+        getLocalDateKey(),
+
+    startTime:
+        formatMinutesAs24Hour(breakStart),
+
+    duration:
+        breakMinutes,
+
+    order:
+        currentBuildDayBlocks.length
+
+});
 
 
-                const breakItem =
-                    document.createElement(
-                        "div"
-                    );
+const breakItem =
+    document.createElement("div");
 
 
-                breakItem.className =
-                    "build-day-break";
+breakItem.className =
+    "build-day-break";
+               
 
 
                 breakItem.innerHTML = `
@@ -1303,13 +1350,45 @@ const plannedTasks =
             }
 
 
-            const startTime =
-                currentMinutes;
+            
+const startTime =
+    currentMinutes;
+
+const taskEnd =
+    startTime + duration;
 
 
-            const taskEnd =
-                startTime +
-                duration;
+currentBuildDayBlocks.push({
+
+    id:
+        `task-${String(task.id)}`,
+
+    type:
+        "task",
+
+    taskId:
+        String(task.id),
+
+    title:
+        task.text,
+
+    date:
+        getLocalDateKey(),
+
+    startTime:
+        formatMinutesAs24Hour(startTime),
+
+    duration:
+        duration,
+
+    endTime:
+        formatMinutesAs24Hour(taskEnd),
+
+    order:
+        currentBuildDayBlocks.length
+
+});
+           
 
 
             const item =
@@ -1547,41 +1626,49 @@ function saveBuildDayState() {
     }
 
 
-    const plan = {
 
-        date:
-            new Date()
-                .toLocaleDateString("en-CA"),
+const plan = {
 
-        updatedAt:
-            new Date().toISOString(),
+    version: 2,
 
-        settings: {
+    date:
+        getLocalDateKey(),
 
-            startTime:
-                startInput.value,
+    updatedAt:
+        new Date().toISOString(),
 
-            endTime:
-                endInput.value,
+    settings: {
 
-            breakDuration:
-                breakInput.value,
+        startTime:
+            startInput.value,
 
-            maxTasks:
-                maxTasksInput.value
+        endTime:
+            endInput.value,
 
-        },
+        breakDuration:
+            breakInput.value,
 
-        excludedTaskIds:
-            getBuildDayExcludedTasks(),
+        maxTasks:
+            maxTasksInput.value
 
-        scheduleHTML:
-            schedule.innerHTML,
+    },
 
-        totalTime:
-            totalTime.textContent
+    excludedTaskIds:
+        getBuildDayExcludedTasks(),
 
-    };
+    scheduleBlocks:
+        currentBuildDayBlocks.map(
+            block => ({ ...block })
+        ),
+
+    scheduleHTML:
+        schedule.innerHTML,
+
+    totalTime:
+        totalTime.textContent
+
+};
+   
 
 
     try {
@@ -1787,12 +1874,22 @@ function restoreBuildDayState() {
     }
 
 
-    schedule.innerHTML =
-        plan.scheduleHTML || "";
+    
+schedule.innerHTML =
+    plan.scheduleHTML || "";
 
 
-    totalTime.textContent =
-        plan.totalTime || "0m planned";
+currentBuildDayBlocks =
+    Array.isArray(plan.scheduleBlocks)
+        ? plan.scheduleBlocks.map(
+            block => ({ ...block })
+        )
+        : [];
+
+
+totalTime.textContent =
+    plan.totalTime || "0m planned";
+   
 
 
     panel.style.display =
@@ -1959,6 +2056,26 @@ function removeBuildDayTask(taskId) {
 
 }
 
+
+/* ======================================
+   24-HOUR TIME CONVERSION
+====================================== */
+
+function formatMinutesAs24Hour(totalMinutes) {
+
+    const hours =
+        Math.floor(totalMinutes / 60);
+
+    const minutes =
+        totalMinutes % 60;
+
+    return (
+        String(hours).padStart(2, "0") +
+        ":" +
+        String(minutes).padStart(2, "0")
+    );
+
+}
 
 
 /* ======================================
