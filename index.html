@@ -652,20 +652,30 @@ id="categoryFilter">
 
 </div>
 
-    <div class="build-day-header">
 
-        <div>
+<div class="build-day-header">
 
-            <h3>
-                📅 My Day
-            </h3>
+    <div>
 
-            <p>
-                Tasky has created a suggested schedule
-                from your highest-priority tasks.
-            </p>
+        <h3>📅 My Day</h3>
 
-        </div>
+        <p>
+            Your saved daily schedule.
+        </p>
+
+        <span
+            id="buildDaySaveStatus"
+            class="build-day-save-status"
+            role="status"
+            aria-live="polite">
+
+            Not saved yet
+
+        </span>
+
+    </div>
+
+    <div class="build-day-header-actions">
 
         <span
             id="buildDayTotalTime"
@@ -675,7 +685,19 @@ id="categoryFilter">
 
         </span>
 
+        <button
+            id="saveBuildDayBtn"
+            class="build-day-save-btn"
+            type="button">
+
+            💾 Save Plan
+
+        </button>
+
     </div>
+
+</div>
+    
 
 
     <div
