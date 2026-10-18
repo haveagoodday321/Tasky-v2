@@ -1281,3 +1281,37 @@ body.light-theme .progress{
 
 }
 
+
+/* ========================================
+   CALENDAR SCHEDULE BLOCKS
+======================================== */
+
+.calendar-scheduled-task,
+.calendar-schedule-break {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px;
+    margin: 6px 0;
+    border-radius: 10px;
+}
+
+.calendar-scheduled-task {
+    border-left: 3px solid var(--primary);
+}
+
+.calendar-schedule-break {
+    border-left: 3px solid var(--accent);
+    background: var(--surface2);
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.calendar-scheduled-task strong {
+    color: var(--text);
+}
+
+.calendar-scheduled-task span {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
