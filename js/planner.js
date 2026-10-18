@@ -1939,9 +1939,8 @@ function rebuildBuildMyDay() {
    EDIT BUILD-DAY TASK
 ====================================== */
 
-function editBuildDayTask(
-    taskId
-) {
+
+function editBuildDayTask(taskId) {
 
     const task =
         tasks.find(
@@ -1950,61 +1949,214 @@ function editBuildDayTask(
                 String(taskId)
         );
 
-
     if (!task) {
         return;
     }
 
+    const taskBlockIndex =
+        currentBuildDayBlocks.findIndex(
+            block =>
+                block.type === "task" &&
+                String(block.taskId) ===
+                String(taskId)
+        );
 
-    const newDuration =
+    if (taskBlockIndex === -1) {
+        alert(
+            "This task is not in the current schedule. Rebuild your plan and try again."
+        );
+        return;
+    }
+
+    const taskBlock =
+        currentBuildDayBlocks[taskBlockIndex];
+
+    const newStartTime =
+        prompt(
+            `New start time for "${task.text}" (HH:MM, 24-hour time):`,
+            taskBlock.startTime
+        );
+
+    if (newStartTime === null) {
+        return;
+    }
+
+    if (
+        !/^([01]\d|2[0-3]):[0-5]\d$/.test(
+            newStartTime.trim()
+        )
+    ) {
+        alert(
+            "Enter a valid 24-hour time, such as 16:30."
+        );
+        return;
+    }
+
+    const newDurationInput =
         prompt(
             `How many minutes should "${task.text}" take?`,
-            task.duration || 60
+            String(taskBlock.duration)
         );
 
-
-    if (
-        newDuration === null
-    ) {
+    if (newDurationInput === null) {
         return;
     }
 
-
-    const duration =
-        Number(
-            newDuration
-        );
-
+    const newDuration =
+        Number(newDurationInput);
 
     if (
-        !Number.isFinite(duration) ||
-        duration <= 0
+        !Number.isFinite(newDuration) ||
+        !Number.isInteger(newDuration) ||
+        newDuration < 1 ||
+        newDuration > 1440
     ) {
-
         alert(
-            "Please enter a valid duration."
+            "Enter a whole number between 1 and 1440 minutes."
         );
-
         return;
-
     }
 
+    const newStartMinutes =
+        parse24HourToMinutes(
+            newStartTime.trim()
+        );
+
+    /*
+     * Prevent the edited task from
+     * overlapping the previous block.
+     */
+
+    if (taskBlockIndex > 0) {
+
+        const previousBlock =
+            currentBuildDayBlocks[
+                taskBlockIndex - 1
+            ];
+
+        const previousStart =
+            parse24HourToMinutes(
+                previousBlock.startTime
+            );
+
+        const previousEnd =
+            previousStart +
+            Number(previousBlock.duration || 0);
+
+        if (
+            newStartMinutes < previousEnd
+        ) {
+            alert(
+                "This task would overlap the previous task or break. Choose a later start time."
+            );
+            return;
+        }
+    }
+
+    /*
+     * Apply the new time and duration.
+     */
+
+    taskBlock.startTime =
+        newStartTime.trim();
+
+    taskBlock.duration =
+        newDuration;
+
+    taskBlock.endTime =
+        formatMinutesAs24Hour(
+            newStartMinutes + newDuration
+        );
 
     task.duration =
-        Math.round(
-            duration
+        newDuration;
+
+    /*
+     * Keep the main task list in sync.
+     */
+
+    if (typeof saveTasks === "function") {
+
+        saveTasks();
+
+    } else {
+
+        localStorage.setItem(
+            "tasks",
+            JSON.stringify(tasks)
         );
 
+    }
 
-    localStorage.setItem(
-        "tasks",
-        JSON.stringify(
-            tasks
-        )
+    /*
+     * Recalculate all later blocks.
+     * Earlier blocks remain unchanged.
+     */
+
+    let nextMinutes =
+        newStartMinutes + newDuration;
+
+    for (
+        let i = taskBlockIndex + 1;
+        i < currentBuildDayBlocks.length;
+        i++
+    ) {
+
+        const block =
+            currentBuildDayBlocks[i];
+
+        block.startTime =
+            formatMinutesAs24Hour(
+                nextMinutes
+            );
+
+        if (block.type === "break") {
+
+            nextMinutes +=
+                Number(block.duration || 0);
+
+        } else {
+
+            block.endTime =
+                formatMinutesAs24Hour(
+                    nextMinutes +
+                    Number(block.duration || 0)
+                );
+
+            nextMinutes +=
+                Number(block.duration || 0);
+
+        }
+    }
+
+    /*
+     * Keep the stored order consistent.
+     */
+
+    currentBuildDayBlocks.forEach(
+        (block, index) => {
+
+            block.order = index;
+
+        }
     );
 
+    renderBuildDayBlocks();
 
-    buildMyDay();
+    saveBuildDayState();
+
+    /*
+     * Refresh Calendar if its renderer
+     * is available.
+     */
+
+    if (
+        typeof buildCalendar === "function"
+    ) {
+
+        buildCalendar();
+
+    }
 
 }
 
@@ -2055,6 +2207,176 @@ function removeBuildDayTask(taskId) {
 
 
     buildMyDay();
+
+}
+
+
+/* ======================================
+   PARSE 24-HOUR TIME
+====================================== */
+
+function parse24HourToMinutes(timeString) {
+
+    const parts =
+        timeString.split(":").map(Number);
+
+    return (
+        parts[0] * 60 +
+        parts[1]
+    );
+
+}
+
+
+/* ======================================
+   RENDER SAVED BUILD-DAY BLOCKS
+====================================== */
+
+function renderBuildDayBlocks() {
+
+    const schedule =
+        document.getElementById(
+            "buildDaySchedule"
+        );
+
+    const totalTime =
+        document.getElementById(
+            "buildDayTotalTime"
+        );
+
+    if (!schedule || !totalTime) {
+        return;
+    }
+
+    schedule.innerHTML = "";
+
+    let totalTaskMinutes = 0;
+    let taskNumber = 0;
+
+    currentBuildDayBlocks.forEach(
+        block => {
+
+            const startMinutes =
+                parse24HourToMinutes(
+                    block.startTime
+                );
+
+            const duration =
+                Number(block.duration || 0);
+
+            const item =
+                document.createElement("div");
+
+            if (block.type === "break") {
+
+                item.className =
+                    "build-day-break";
+
+                item.innerHTML = `
+                    <span>☕</span>
+                    <span>
+                        ${formatPlannerTimeOfDay(startMinutes)}
+                        –
+                        ${formatPlannerTimeOfDay(startMinutes + duration)}
+                    </span>
+                    <strong>Break</strong>
+                `;
+
+            } else {
+
+                taskNumber++;
+                totalTaskMinutes += duration;
+
+                item.className =
+                    "build-day-item";
+
+                const time =
+                    document.createElement("div");
+
+                time.className =
+                    "build-day-time";
+
+                const timeLabel =
+                    document.createElement("span");
+
+                timeLabel.textContent =
+                    `${formatPlannerTimeOfDay(startMinutes)} – ${formatPlannerTimeOfDay(startMinutes + duration)}`;
+
+                const editButton =
+                    document.createElement("button");
+
+                editButton.className =
+                    "build-day-edit-btn";
+
+                editButton.type = "button";
+                editButton.dataset.taskId =
+                    String(block.taskId);
+
+                editButton.textContent = "✏️";
+                editButton.setAttribute(
+                    "aria-label",
+                    `Edit ${block.title || "task"} time and duration`
+                );
+
+                time.append(
+                    timeLabel,
+                    editButton
+                );
+
+                const taskDetails =
+                    document.createElement("div");
+
+                taskDetails.className =
+                    "build-day-task";
+
+                const title =
+                    document.createElement("strong");
+
+                title.textContent =
+                    `${taskNumber}. ${block.title || "Scheduled task"}`;
+
+                const durationLabel =
+                    document.createElement("span");
+
+                durationLabel.textContent =
+                    `⏱️ ${formatPlannerTime(duration)}`;
+
+                taskDetails.append(
+                    title,
+                    durationLabel
+                );
+
+                const removeButton =
+                    document.createElement("button");
+
+                removeButton.className =
+                    "build-day-remove-btn";
+
+                removeButton.type = "button";
+                removeButton.dataset.taskId =
+                    String(block.taskId);
+
+                removeButton.textContent = "✕";
+                removeButton.setAttribute(
+                    "aria-label",
+                    `Remove ${block.title || "task"} from today's schedule`
+                );
+
+                item.append(
+                    time,
+                    taskDetails,
+                    removeButton
+                );
+
+            }
+
+            schedule.appendChild(item);
+
+        }
+    );
+
+    totalTime.textContent =
+        `${formatPlannerTime(totalTaskMinutes)} planned`;
 
 }
 
