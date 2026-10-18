@@ -242,58 +242,65 @@ function buildCalendar() {
            TASK INDICATOR
         ================================== */
 
-        const dayTasks =
-            getTasksForCalendarDate(
-                dateString
-            );
+        
+const dayTasks =
+    getTasksForCalendarDate(
+        dateString
+    );
+
+const scheduledBlocks =
+    getScheduleBlocksForCalendarDate(
+        dateString
+    );
+
+const scheduledTaskIds =
+    scheduledBlocks
+        .filter(
+            block => block.type === "task"
+        )
+        .map(
+            block => String(block.taskId)
+        );
+
+const uniqueTaskIds =
+    new Set([
+        ...dayTasks.map(
+            task => String(task.id)
+        ),
+        ...scheduledTaskIds
+    ]);
+
+const dayItemCount =
+    uniqueTaskIds.size;
 
 
-        if (dayTasks.length > 0) {
+if (dayItemCount > 0) {
 
-            day.classList.add(
-                "has-tasks"
-            );
+    day.classList.add("has-tasks");
 
+    const indicator =
+        document.createElement("span");
 
-            const indicator =
-                document.createElement(
-                    "span"
-                );
+    indicator.className = "task-dot";
+    indicator.textContent = "•";
 
-            indicator.className =
-                "task-dot";
-
-            indicator.textContent =
-                "•";
+    day.appendChild(indicator);
 
 
-            day.appendChild(
-                indicator
-            );
+    if (dayItemCount > 1) {
 
+        const count =
+            document.createElement("span");
 
-            /* Number of tasks */
+        count.className = "task-count";
+        count.textContent = dayItemCount;
 
-            if (dayTasks.length > 1) {
+        day.appendChild(count);
 
-                const count =
-                    document.createElement(
-                        "span"
-                    );
+    }
 
-                count.className =
-                    "task-count";
-
-                count.textContent =
-                    dayTasks.length;
-
-                day.appendChild(
-                    count
-                );
-
-            }
-
-        }
+}
+       
 
 
         /* ==================================
@@ -371,77 +378,97 @@ function buildCalendar() {
    GET TASKS FOR DATE
 ====================================== */
 
-function getTasksForCalendarDate(
-    dateString
-) {
 
-    if (
-        typeof tasks ===
-        "undefined"
-    ) {
+function getTasksForCalendarDate(dateString) {
 
+    if (typeof tasks === "undefined") {
         return [];
-
     }
 
-
     return tasks.filter(
-        task =>
-            task.deadline ===
-            dateString
+        task => task.deadline === dateString
     );
 
 }
 
 
 /* ======================================
+   GET SAVED DAILY SCHEDULE BLOCKS
+====================================== */
+
+function getScheduleBlocksForCalendarDate(dateString) {
+
+    try {
+
+        const saved =
+            localStorage.getItem("taskyDailyPlan");
+
+        if (!saved) {
+            return [];
+        }
+
+        const plan = JSON.parse(saved);
+
+        if (
+            !plan ||
+            !Array.isArray(plan.scheduleBlocks)
+        ) {
+            return [];
+        }
+
+        if (plan.date !== dateString) {
+            return [];
+        }
+
+        return plan.scheduleBlocks
+            .filter(
+                block =>
+                    block.date === dateString
+            )
+            .sort(
+                (a, b) =>
+                    a.order - b.order
+            );
+
+    } catch (error) {
+
+        console.error(
+            "Could not read Calendar schedule:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+
+/* ======================================
    SHOW SELECTED DATE TASKS
 ====================================== */
 
-function showSelectedDateTasks(
-    dateString
-) {
+
+function showSelectedDateTasks(dateString) {
 
     const container =
         document.getElementById(
             "selectedDateTasks"
         );
 
-
     if (!container) {
         return;
     }
-
 
     container.innerHTML = "";
 
 
     const date =
-        new Date(
-            `${dateString}T00:00:00`
-        );
-
-
-    const title =
-        document.querySelector(
-            "#selectedDateTasks"
-        );
-
-
-    const dayTasks =
-        getTasksForCalendarDate(
-            dateString
-        );
-
-
-    /* ==================================
-       DATE HEADING
-    ================================== */
+        new Date(`${dateString}T00:00:00`);
 
     const heading =
-        document.createElement(
-            "li"
-        );
+        document.createElement("li");
 
     heading.className =
         "selected-date-heading";
@@ -457,102 +484,158 @@ function showSelectedDateTasks(
             }
         );
 
-
-    container.appendChild(
-        heading
-    );
+    container.appendChild(heading);
 
 
     /* ==================================
-       NO TASKS
+       DEADLINE TASKS
     ================================== */
 
-    if (
-        dayTasks.length === 0
-    ) {
+    const dayTasks =
+        getTasksForCalendarDate(dateString);
+
+    const deadlineHeading =
+        document.createElement("li");
+
+    deadlineHeading.className =
+        "selected-date-heading";
+
+    deadlineHeading.textContent =
+        "📝 Deadline Tasks";
+
+    container.appendChild(deadlineHeading);
+
+
+    if (dayTasks.length === 0) {
 
         const empty =
-            document.createElement(
-                "li"
-            );
+            document.createElement("li");
 
         empty.className =
             "calendar-no-tasks";
 
         empty.textContent =
-            "No tasks scheduled for this day. 🎉";
+            "No deadline tasks for this day.";
 
+        container.appendChild(empty);
 
-        container.appendChild(
-            empty
-        );
+    } else {
 
-        return;
-
-    }
-
-
-    /* ==================================
-       TASKS
-    ================================== */
-
-    dayTasks.forEach(
-        task => {
+        dayTasks.forEach(task => {
 
             const li =
-                document.createElement(
-                    "li"
-                );
+                document.createElement("li");
 
-
-            li.className =
-                "calendar-task";
-
+            li.className = "calendar-task";
 
             if (task.completed) {
-
-                li.classList.add(
-                    "completed"
-                );
-
+                li.classList.add("completed");
             }
 
-
             const title =
-                document.createElement(
-                    "strong"
-                );
+                document.createElement("strong");
 
-            title.textContent =
-                task.text;
-
+            title.textContent = task.text;
 
             const meta =
-                document.createElement(
-                    "span"
-                );
+                document.createElement("span");
 
             meta.textContent =
                 task.completed
                     ? "✓ Completed"
                     : `${task.priority} priority`;
 
+            li.appendChild(title);
+            li.appendChild(meta);
 
-            li.appendChild(
-                title
-            );
+            container.appendChild(li);
 
-            li.appendChild(
-                meta
-            );
+        });
+
+    }
 
 
-            container.appendChild(
-                li
-            );
+    /* ==================================
+       BUILD MY DAY SCHEDULE
+    ================================== */
 
-        }
-    );
+    const scheduledBlocks =
+        getScheduleBlocksForCalendarDate(
+            dateString
+        );
+
+    const scheduleHeading =
+        document.createElement("li");
+
+    scheduleHeading.className =
+        "selected-date-heading";
+
+    scheduleHeading.textContent =
+        "📅 Build My Day";
+
+    container.appendChild(scheduleHeading);
+
+
+    const taskBlocks =
+        scheduledBlocks.filter(
+            block => block.type === "task"
+        );
+
+    if (taskBlocks.length === 0) {
+
+        const empty =
+            document.createElement("li");
+
+        empty.className =
+            "calendar-no-tasks";
+
+        empty.textContent =
+            "No saved daily schedule for this day.";
+
+        container.appendChild(empty);
+
+    } else {
+
+        scheduledBlocks.forEach(block => {
+
+            const li =
+                document.createElement("li");
+
+            if (block.type === "break") {
+
+                li.className =
+                    "calendar-schedule-break";
+
+                li.textContent =
+                    `☕ ${block.startTime} · ${block.duration} min break`;
+
+            } else {
+
+                li.className =
+                    "calendar-task calendar-scheduled-task";
+
+                const title =
+                    document.createElement("strong");
+
+                title.textContent =
+                    block.title || "Scheduled task";
+
+                const meta =
+                    document.createElement("span");
+
+                meta.textContent =
+                    `${block.startTime} – ${block.endTime || ""} · ${block.duration} min`;
+
+                li.appendChild(title);
+                li.appendChild(meta);
+
+            }
+
+            container.appendChild(li);
+
+        });
+
+    }
 
 }
 
