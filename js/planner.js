@@ -1176,6 +1176,8 @@ const plannedTasks =
         maxTasks
     );
 
+   currentBuildDayBlocks = [];
+
 
     panel.style.display =
         "block";
