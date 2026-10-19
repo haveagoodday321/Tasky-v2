@@ -1940,6 +1940,7 @@ function rebuildBuildMyDay() {
 ====================================== */
 
 
+
 function editBuildDayTask(taskId) {
 
     const task =
@@ -1971,6 +1972,16 @@ function editBuildDayTask(taskId) {
     const taskBlock =
         currentBuildDayBlocks[taskBlockIndex];
 
+    const startInput =
+        document.getElementById("dayStartTime");
+
+    const endInput =
+        document.getElementById("dayEndTime");
+
+    if (!startInput || !endInput) {
+        return;
+    }
+
     const newStartTime =
         prompt(
             `New start time for "${task.text}" (HH:MM, 24-hour time):`,
@@ -1981,9 +1992,12 @@ function editBuildDayTask(taskId) {
         return;
     }
 
+    const normalizedStart =
+        newStartTime.trim();
+
     if (
         !/^([01]\d|2[0-3]):[0-5]\d$/.test(
-            newStartTime.trim()
+            normalizedStart
         )
     ) {
         alert(
@@ -1992,21 +2006,20 @@ function editBuildDayTask(taskId) {
         return;
     }
 
-    const newDurationInput =
+    const durationInput =
         prompt(
             `How many minutes should "${task.text}" take?`,
             String(taskBlock.duration)
         );
 
-    if (newDurationInput === null) {
+    if (durationInput === null) {
         return;
     }
 
     const newDuration =
-        Number(newDurationInput);
+        Number(durationInput);
 
     if (
-        !Number.isFinite(newDuration) ||
         !Number.isInteger(newDuration) ||
         newDuration < 1 ||
         newDuration > 1440
@@ -2019,12 +2032,20 @@ function editBuildDayTask(taskId) {
 
     const newStartMinutes =
         parse24HourToMinutes(
-            newStartTime.trim()
+            normalizedStart
         );
 
+    const dayEndMinutes =
+        parse24HourToMinutes(
+            endInput.value
+        );
+
+    const newEndMinutes =
+        newStartMinutes + newDuration;
+
     /*
-     * Prevent the edited task from
-     * overlapping the previous block.
+     * Validate the edited task against
+     * the previous scheduled block.
      */
 
     if (taskBlockIndex > 0) {
@@ -2041,38 +2062,143 @@ function editBuildDayTask(taskId) {
 
         const previousEnd =
             previousStart +
-            Number(previousBlock.duration || 0);
-
-        if (
-            newStartMinutes < previousEnd
-        ) {
-            alert(
-                "This task would overlap the previous task or break. Choose a later start time."
+            Number(
+                previousBlock.duration || 0
             );
+
+        if (newStartMinutes < previousEnd) {
+
+            alert(
+                "This task overlaps the previous task or break. Choose a later start time."
+            );
+
             return;
+
         }
     }
 
     /*
-     * Apply the new time and duration.
+     * Calculate the entire remaining
+     * schedule without changing it yet.
+     */
+
+    const proposedTimes = [];
+
+    let nextMinutes =
+        newEndMinutes;
+
+    for (
+        let i = taskBlockIndex + 1;
+        i < currentBuildDayBlocks.length;
+        i++
+    ) {
+
+        const block =
+            currentBuildDayBlocks[i];
+
+        const duration =
+            Number(block.duration || 0);
+
+        const blockEnd =
+            nextMinutes + duration;
+
+        proposedTimes.push({
+
+            index: i,
+
+            startTime:
+                formatMinutesAs24Hour(
+                    nextMinutes
+                ),
+
+            endTime:
+                formatMinutesAs24Hour(
+                    blockEnd
+                )
+
+        });
+
+        nextMinutes = blockEnd;
+
+    }
+
+    /*
+     * Reject edits that push any block
+     * beyond the selected end time.
+     */
+
+    if (
+        newStartMinutes < 0 ||
+        newEndMinutes > dayEndMinutes ||
+        nextMinutes > dayEndMinutes
+    ) {
+
+        alert(
+            "This edit would push your schedule beyond the selected end time. Choose an earlier start time or a shorter duration."
+        );
+
+        return;
+
+    }
+
+    /*
+     * Apply the edit only after
+     * all validation succeeds.
      */
 
     taskBlock.startTime =
-        newStartTime.trim();
+        normalizedStart;
 
     taskBlock.duration =
         newDuration;
 
     taskBlock.endTime =
         formatMinutesAs24Hour(
-            newStartMinutes + newDuration
+            newEndMinutes
         );
 
     task.duration =
         newDuration;
 
     /*
-     * Keep the main task list in sync.
+     * Update the remaining blocks.
+     */
+
+    proposedTimes.forEach(
+        proposed => {
+
+            const block =
+                currentBuildDayBlocks[
+                    proposed.index
+                ];
+
+            block.startTime =
+                proposed.startTime;
+
+            if (block.type === "task") {
+
+                block.endTime =
+                    proposed.endTime;
+
+            }
+
+        }
+    );
+
+    /*
+     * Preserve sequential block order.
+     */
+
+    currentBuildDayBlocks.forEach(
+        (block, index) => {
+
+            block.order = index;
+
+        }
+    );
+
+    /*
+     * Save the updated task.
      */
 
     if (typeof saveTasks === "function") {
@@ -2089,66 +2215,12 @@ function editBuildDayTask(taskId) {
     }
 
     /*
-     * Recalculate all later blocks.
-     * Earlier blocks remain unchanged.
+     * Render, save and refresh Calendar.
      */
-
-    let nextMinutes =
-        newStartMinutes + newDuration;
-
-    for (
-        let i = taskBlockIndex + 1;
-        i < currentBuildDayBlocks.length;
-        i++
-    ) {
-
-        const block =
-            currentBuildDayBlocks[i];
-
-        block.startTime =
-            formatMinutesAs24Hour(
-                nextMinutes
-            );
-
-        if (block.type === "break") {
-
-            nextMinutes +=
-                Number(block.duration || 0);
-
-        } else {
-
-            block.endTime =
-                formatMinutesAs24Hour(
-                    nextMinutes +
-                    Number(block.duration || 0)
-                );
-
-            nextMinutes +=
-                Number(block.duration || 0);
-
-        }
-    }
-
-    /*
-     * Keep the stored order consistent.
-     */
-
-    currentBuildDayBlocks.forEach(
-        (block, index) => {
-
-            block.order = index;
-
-        }
-    );
 
     renderBuildDayBlocks();
 
     saveBuildDayState();
-
-    /*
-     * Refresh Calendar if its renderer
-     * is available.
-     */
 
     if (
         typeof buildCalendar === "function"
@@ -2159,6 +2231,7 @@ function editBuildDayTask(taskId) {
     }
 
 }
+
 
 
 /* ======================================
