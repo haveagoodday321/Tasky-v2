@@ -98,9 +98,10 @@ function createTask(
     duration = 60,
     category = "Other",
     tags = [],
-    subtasks = []
+    subtasks = [],
+    repeat = "none"
 ) {
-
+   
     return {
 
         id: generateID(),
@@ -131,6 +132,12 @@ function createTask(
             Array.isArray(subtasks)
                 ? subtasks
                 : [],
+
+       
+repeat: ["none", "daily", "weekly", "monthly"].includes(repeat)
+    ? repeat
+    : "none",
+       
 
         createdAt:
             new Date().toISOString(),
@@ -1716,6 +1723,10 @@ function openCreateTaskModal() {
         "modalDuration"
     );
 
+   
+const repeat = document.getElementById("modalRepeat");
+   
+
 const category =
     document.getElementById(
         "modalCategory"
@@ -1750,6 +1761,8 @@ const subtasksList =
 duration.value = "60";
 
 category.value = "Other";
+
+   repeat.value = "none";
 
 tags.value = "";
 
@@ -1817,6 +1830,8 @@ function openEditTaskModal(id) {
         document.getElementById(
             "modalPriority"
         );
+
+   const repeat = document.getElementById("modalRepeat");
    
 const duration =
     document.getElementById(
@@ -1861,6 +1876,8 @@ const subtasksList =
 
 category.value =
     task.category || "Other";
+
+   repeat.value = task.repeat || "none";
 
 tags.value =
     Array.isArray(task.tags)
@@ -2124,6 +2141,8 @@ function saveTaskFromModal() {
         document.getElementById(
             "modalPriority"
         );
+
+   const repeat = document.getElementById("modalRepeat");
    
 const duration =
     document.getElementById(
@@ -2204,6 +2223,8 @@ const taskSubtasks =
 task.category =
     category.value || "Other";
 
+       task.repeat = repeat.value || "none";
+
 task.tags =
     taskTags;
 
@@ -2243,6 +2264,7 @@ task.subtasks =
         category.value,
         taskTags,
         taskSubtasks
+        repeat.value
     );
 
 
