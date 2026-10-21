@@ -943,6 +943,46 @@ function getNextRecurringDeadline(deadline, repeat) {
        }
 
 
+/* Calculate the next reminder for a recurring task */
+function getNextRecurringReminder(reminderAt, repeat) {
+    if (!reminderAt) return "";
+
+    const current = new Date(reminderAt);
+
+    if (Number.isNaN(current.getTime())) {
+        return "";
+    }
+
+    const originalDay = current.getDate();
+
+    if (repeat === "daily") {
+        current.setDate(current.getDate() + 1);
+    } else if (repeat === "weekly") {
+        current.setDate(current.getDate() + 7);
+    } else if (repeat === "monthly") {
+        current.setDate(1);
+        current.setMonth(current.getMonth() + 1);
+
+        const lastDay = new Date(
+            current.getFullYear(),
+            current.getMonth() + 1,
+            0
+        ).getDate();
+
+        current.setDate(Math.min(originalDay, lastDay));
+    } else {
+        return "";
+    }
+
+    const pad = value => String(value).padStart(2, "0");
+
+    return (
+        `${current.getFullYear()}-${pad(current.getMonth() + 1)}` +
+        `-${pad(current.getDate())}T${pad(current.getHours())}` +
+        `:${pad(current.getMinutes())}`
+    );
+    }
+
 
 function completeTask(id) {
     const task = tasks.find(
@@ -981,7 +1021,11 @@ function completeTask(id) {
                 id: generateID(),
                 completed: false
             })),
-            task.repeat
+                        task.repeat,
+            getNextRecurringReminder(
+                task.reminderAt,
+                task.repeat
+            )
         );
 
         // Link the new occurrence to the original task.
