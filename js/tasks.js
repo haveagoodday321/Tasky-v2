@@ -2263,7 +2263,7 @@ task.subtasks =
         duration.value,
         category.value,
         taskTags,
-        taskSubtasks
+        taskSubtasks,
         repeat.value
     );
 
