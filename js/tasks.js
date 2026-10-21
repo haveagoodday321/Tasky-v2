@@ -895,45 +895,108 @@ function setupTaskButtons() {
    COMPLETE TASK
 ====================================== */
 
+
+/* Calculate the next recurring-task deadline */
+function getNextRecurringDeadline(deadline, repeat) {
+    if (!deadline) return "";
+
+    const parts = deadline.split("-").map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        return "";
+    }
+
+    const [year, month, day] = parts;
+    const next = new Date(year, month - 1, day);
+
+    if (repeat === "daily") {
+        next.setDate(next.getDate() + 1);
+    } else if (repeat === "weekly") {
+        next.setDate(next.getDate() + 7);
+    } else if (repeat === "monthly") {
+        // Preserve the day where possible; clamp to the
+        // final day of the next month when necessary.
+        const targetMonth = next.getMonth() + 1;
+        const lastDay = new Date(
+            next.getFullYear(),
+            targetMonth + 1,
+            0
+        ).getDate();
+
+        next.setDate(1);
+        next.setMonth(targetMonth);
+        next.setDate(Math.min(day, lastDay));
+    } else {
+        return "";
+    }
+
+    const yyyy = next.getFullYear();
+    const mm = String(next.getMonth() + 1).padStart(2, "0");
+    const dd = String(next.getDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}`;
+       }
+
+
+
 function completeTask(id) {
-
-    const task =
-        tasks.find(
-            task =>
-                String(task.id) ===
-                String(id)
-        );
-
+    const task = tasks.find(
+        item => String(item.id) === String(id)
+    );
 
     if (!task) return;
 
+    task.completed = !task.completed;
 
-    task.completed =
-        !task.completed;
+    task.completedAt = task.completed
+        ? new Date().toISOString()
+        : null;
 
+    // Create the next occurrence only once per task.
+    if (
+        task.completed &&
+        ["daily", "weekly", "monthly"].includes(task.repeat) &&
+        !task.nextOccurrenceCreated
+    ) {
+        const nextDeadline = getNextRecurringDeadline(
+            task.deadline,
+            task.repeat
+        );
 
-    task.completedAt =
-        task.completed
-            ? new Date().toISOString()
-            : null;
+        const nextTask = createTask(
+            task.text,
+            task.priority,
+            nextDeadline,
+            task.description,
+            task.duration,
+            task.category,
+            [...(task.tags || [])],
+            (task.subtasks || []).map(subtask => ({
+                ...subtask,
+                id: generateID(),
+                completed: false
+            })),
+            task.repeat
+        );
 
+        // Link the new occurrence to the original task.
+        nextTask.recurringFrom = task.id;
+
+        tasks.unshift(nextTask);
+        task.nextOccurrenceCreated = true;
+    }
 
     saveTasks();
-
     renderTasks();
-
     updateDashboard();
-
     updateAnalytics();
-
 
     showToast(
         task.completed
             ? "🎉 Task completed!"
             : "Task reopened."
     );
+                                               }
 
-}
 
 
 /* ======================================
