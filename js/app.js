@@ -20,9 +20,13 @@ function initializeApp() {
 
     showTodayDate();
 
-    setupNavigation();
+    
+setupNavigation();
 
-    refreshApp();
+refreshApp();
+
+initializeReminderEngine();
+   
 
     console.log(
         "✅ Tasky v2 Loaded Successfully"
