@@ -1409,3 +1409,53 @@
     }
 
 }
+
+
+/* ========================================
+   TASK EDITOR — VISIBLE INPUT TEXT FIX
+   ======================================== */
+
+.task-modal-content {
+    color: #111827;
+}
+
+.task-modal-content .task-form input,
+.task-modal-content .task-form textarea,
+.task-modal-content .task-form select,
+.task-modal-content .subtasks-list input {
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827;
+    background-color: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    caret-color: #4F46E5;
+}
+
+.task-modal-content .task-form input::placeholder,
+.task-modal-content .task-form textarea::placeholder,
+.task-modal-content .subtasks-list input::placeholder {
+    color: #64748B;
+    -webkit-text-fill-color: #64748B;
+    opacity: 1;
+}
+
+.task-modal-content .task-form input:focus,
+.task-modal-content .task-form textarea:focus,
+.task-modal-content .task-form select:focus,
+.task-modal-content .subtasks-list input:focus {
+    border-color: #6366F1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Keep dropdown options readable */
+.task-modal-content .task-form select option {
+    color: #111827;
+    background-color: #FFFFFF;
+}
+
+/* Make labels readable on the modal background */
+.task-modal-content .task-form label,
+.task-modal-content .subtasks-header label {
+    color: #111827;
+}
+
