@@ -1035,10 +1035,21 @@ function completeTask(id) {
         task.nextOccurrenceCreated = true;
     }
 
-    saveTasks();
-    renderTasks();
-    updateDashboard();
-    updateAnalytics();
+    
+saveTasks();
+renderTasks();
+updateDashboard();
+updateAnalytics();
+
+// Keep the planner and calendar in sync with task changes.
+if (typeof renderSmartPlanner === "function") {
+    renderSmartPlanner();
+}
+
+if (typeof buildCalendar === "function") {
+    buildCalendar();
+           }
+   
 
     showToast(
         task.completed
