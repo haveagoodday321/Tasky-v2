@@ -997,12 +997,14 @@ function completeTask(id) {
         ? new Date().toISOString()
         : null;
 
-    // Create the next occurrence only once per task.
-    if (
-        task.completed &&
-        ["daily", "weekly", "monthly"].includes(task.repeat) &&
-        !task.nextOccurrenceCreated
-    ) {
+    // Generate the next occurrence only when this task
+// transitions from incomplete to complete, and only
+// if the next occurrence has not already been created.
+if (
+    task.completed &&
+    ["daily", "weekly", "monthly"].includes(task.repeat) &&
+    !tasks.some(item => String(item.recurringFrom) === String(task.id))
+) {
         const nextDeadline = getNextRecurringDeadline(
             task.deadline,
             task.repeat
