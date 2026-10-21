@@ -90,6 +90,7 @@ function generateID() {
    CREATE TASK
 ====================================== */
 
+
 function createTask(
     text,
     priority = "Medium",
@@ -99,8 +100,10 @@ function createTask(
     category = "Other",
     tags = [],
     subtasks = [],
-    repeat = "none"
+    repeat = "none",
+    reminderAt = ""
 ) {
+   
    
     return {
 
@@ -137,6 +140,9 @@ function createTask(
 repeat: ["none", "daily", "weekly", "monthly"].includes(repeat)
     ? repeat
     : "none",
+      
+       
+reminderAt: reminderAt || "",
        
 
         createdAt:
@@ -1817,6 +1823,8 @@ const subtasksList =
 
     description.value = "";
 
+   document.getElementById("modalReminderAt").value = "";
+
     deadline.value = "";
 
     priority.value = "Medium";
@@ -1930,6 +1938,9 @@ const subtasksList =
 
     deadline.value =
         task.deadline || "";
+
+   document.getElementById("modalReminderAt").value =
+    task.reminderAt || "";
 
 
     priority.value =
@@ -2277,6 +2288,9 @@ const taskSubtasks =
         task.deadline =
             deadline.value;
 
+       task.reminderAt =
+    document.getElementById("modalReminderAt").value || "";
+
         task.priority =
             priority.value;
 
@@ -2317,18 +2331,20 @@ task.subtasks =
 
     /* CREATE NEW TASK */
 
-    const newTask =
-    createTask(
-        text,
-        priority.value,
-        deadline.value,
-        description.value,
-        duration.value,
-        category.value,
-        taskTags,
-        taskSubtasks,
-        repeat.value
-    );
+
+const newTask = createTask(
+    text,
+    priority.value,
+    deadline.value,
+    description.value,
+    duration.value,
+    category.value,
+    taskTags,
+    taskSubtasks,
+    repeat.value,
+    document.getElementById("modalReminderAt").value
+);
+   
 
 
 
