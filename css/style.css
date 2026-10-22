@@ -1366,3 +1366,36 @@ body.light-theme .progress{
     border-color: #22c55e;
 }
 
+
+/* Tasky XP and level progress */
+.xp-progress-track {
+    width: 100%;
+    height: 10px;
+    margin: 12px 0 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #E5E7EB;
+}
+
+.xp-progress-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: #6366F1;
+    transition: width 250ms ease;
+}
+
+.productivity-level-card strong {
+    font-variant-numeric: tabular-nums;
+}
+
+#xpProgressLabel {
+    color: var(--text-secondary, #64748B);
+    font-size: 0.875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .xp-progress-bar {
+        transition: none;
+    }
+}
