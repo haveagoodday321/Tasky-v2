@@ -991,7 +991,14 @@ function completeTask(id) {
 
     if (!task) return;
 
-    task.completed = !task.completed;
+    const wasCompleted = task.completed;
+task.completed = !task.completed;
+
+// Count only a genuine transition to completed.
+if (!wasCompleted && task.completed &&
+    typeof recordTaskCompletion === "function") {
+    recordTaskCompletion();
+}
 
     task.completedAt = task.completed
         ? new Date().toISOString()
