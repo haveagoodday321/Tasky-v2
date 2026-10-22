@@ -1,25 +1,92 @@
+
 /* ======================================
    TASKY REMINDER ENGINE
 ====================================== */
 
-const TASKY_NOTIFIED_REMINDERS_KEY = "tasky_notified_reminders_v1";
+const TASKY_NOTIFIED_REMINDERS_KEY =
+    "tasky_notified_reminders_v1";
+
+const TASKY_NOTIFICATIONS_ENABLED_KEY =
+    "tasky_notifications_enabled_v1";
+
 let taskyReminderInterval = null;
 
-/* Read reminder IDs already handled by this browser */
+/* Read Tasky's notification preference */
+function areTaskyNotificationsEnabled() {
+    return localStorage.getItem(
+        TASKY_NOTIFICATIONS_ENABLED_KEY
+    ) === "true";
+}
+
+/* Save Tasky's notification preference */
+function setTaskyNotificationsEnabled(enabled) {
+    localStorage.setItem(
+        TASKY_NOTIFICATIONS_ENABLED_KEY,
+        String(enabled)
+    );
+
+    updateTaskyNotificationButton();
+}
+
+/* Update the button to match the current state */
+function updateTaskyNotificationButton() {
+    const button = document.getElementById(
+        "enableTaskyNotifications"
+    );
+
+    if (!button) return;
+
+    const enabled = areTaskyNotificationsEnabled();
+    const supported = "Notification" in window;
+    const permission = supported
+        ? Notification.permission
+        : "unsupported";
+
+    button.disabled = false;
+    button.setAttribute(
+        "aria-pressed",
+        String(enabled)
+    );
+
+    if (!supported) {
+        button.textContent = "Notifications unsupported";
+        button.disabled = true;
+        return;
+    }
+
+    if (permission === "denied") {
+        button.textContent = "Notifications blocked in browser";
+        return;
+    }
+
+    button.textContent = enabled
+        ? "Disable notifications"
+        : "Enable notifications";
+}
+
+/* Read previously handled reminder IDs */
 function getHandledTaskyReminders() {
     try {
         const saved = localStorage.getItem(
             TASKY_NOTIFIED_REMINDERS_KEY
         );
 
-        return new Set(saved ? JSON.parse(saved) : []);
+        const parsed = JSON.parse(saved || "[]");
+
+        return new Set(
+            Array.isArray(parsed) ? parsed : []
+        );
     } catch (error) {
-        console.error("Could not read reminder history:", error);
+        console.error(
+            "Could not read reminder history:",
+            error
+        );
+
         return new Set();
     }
 }
 
-/* Save reminder history to prevent duplicate notifications */
+/* Save handled reminder IDs */
 function saveHandledTaskyReminders(handled) {
     try {
         localStorage.setItem(
@@ -27,61 +94,122 @@ function saveHandledTaskyReminders(handled) {
             JSON.stringify([...handled])
         );
     } catch (error) {
-        console.error("Could not save reminder history:", error);
+        console.error(
+            "Could not save reminder history:",
+            error
+        );
     }
 }
 
-/* Ask permission only after the user clicks a button */
-async function enableTaskyNotifications() {
+/* Enable or disable Tasky's notifications */
+async function toggleTaskyNotifications() {
     if (!("Notification" in window)) {
-        showToast("This browser does not support notifications.");
+        showToast(
+            "This browser does not support notifications."
+        );
+        updateTaskyNotificationButton();
         return;
     }
 
+    /* Turn off Tasky's notifications */
+    if (areTaskyNotificationsEnabled()) {
+        setTaskyNotificationsEnabled(false);
+
+        showToast("Tasky notifications disabled.");
+        return;
+    }
+
+    /* Browser permission has already been granted */
+    if (Notification.permission === "granted") {
+        setTaskyNotificationsEnabled(true);
+
+        showToast("Tasky notifications enabled!");
+        checkTaskyReminders();
+        return;
+    }
+
+    /* Permission was previously denied */
+    if (Notification.permission === "denied") {
+        showToast(
+            "Allow notifications in your browser or site settings."
+        );
+
+        updateTaskyNotificationButton();
+        return;
+    }
+
+    /* Request permission from the user's button click */
     try {
-        const permission = await Notification.requestPermission();
+        const permission =
+            await Notification.requestPermission();
 
         if (permission === "granted") {
-            showToast("Notifications enabled!");
+            setTaskyNotificationsEnabled(true);
+
+            showToast("Tasky notifications enabled!");
             checkTaskyReminders();
         } else {
+            setTaskyNotificationsEnabled(false);
+
             showToast(
-                "Notifications weren't enabled. Check your browser permissions."
+                "Notifications were not enabled. Check browser permissions."
             );
         }
     } catch (error) {
-        console.error("Notification permission error:", error);
-        showToast("Could not enable notifications.");
+        console.error(
+            "Notification permission error:",
+            error
+        );
+
+        showToast(
+            "Could not enable notifications."
+        );
+
+        updateTaskyNotificationButton();
     }
 }
 
-/* Send one notification for a due reminder */
+/* Display a reminder */
 function sendTaskyReminder(task) {
-    const message = `Tasky reminder: ${task.text}`;
+    const message = task.text
+        ? `You have an outstanding task: ${task.text}`
+        : "You have an outstanding task in Tasky.";
 
     if (
+        areTaskyNotificationsEnabled() &&
         "Notification" in window &&
         Notification.permission === "granted"
     ) {
         try {
-            new Notification("Tasky", {
+            new Notification("Tasky Reminder", {
                 body: message,
                 tag: `tasky-${task.id}`
             });
-            return;
+
+            return true;
         } catch (error) {
-            console.error("Could not display notification:", error);
+            console.error(
+                "Could not display notification:",
+                error
+            );
         }
     }
 
     if (typeof showToast === "function") {
         showToast(message);
     }
+
+    return false;
 }
 
-/* Check tasks for reminders that are due */
+/* Check for due task reminders */
 function checkTaskyReminders() {
-    if (typeof tasks === "undefined" || !Array.isArray(tasks)) {
+    if (!areTaskyNotificationsEnabled()) return;
+
+    if (
+        typeof tasks === "undefined" ||
+        !Array.isArray(tasks)
+    ) {
         return;
     }
 
@@ -98,27 +226,28 @@ function checkTaskyReminders() {
             return;
         }
 
-        const reminderTime = new Date(task.reminderAt).getTime();
+        const reminderTime =
+            new Date(task.reminderAt).getTime();
 
-        if (!Number.isFinite(reminderTime)) {
-            return;
-        }
+        if (!Number.isFinite(reminderTime)) return;
 
-        const reminderKey = `${task.id}:${task.reminderAt}`;
+        const reminderKey =
+            `${task.id}:${task.reminderAt}`;
 
-        if (handled.has(reminderKey)) {
-            return;
-        }
+        if (handled.has(reminderKey)) return;
 
-        // Avoid surprising notifications for reminders over 12 hours late.
         const twelveHours = 12 * 60 * 60 * 1000;
 
-        if (reminderTime <= now && now - reminderTime <= twelveHours) {
+        if (
+            reminderTime <= now &&
+            now - reminderTime <= twelveHours
+        ) {
             sendTaskyReminder(task);
+
             handled.add(reminderKey);
             historyChanged = true;
         } else if (reminderTime < now - twelveHours) {
-            // Mark very old reminders as handled without notifying.
+            /* Ignore very old reminders */
             handled.add(reminderKey);
             historyChanged = true;
         }
@@ -129,7 +258,7 @@ function checkTaskyReminders() {
     }
 }
 
-/* Start checking reminders while Tasky is open */
+/* Start the reminder engine */
 function initializeReminderEngine() {
     if (taskyReminderInterval !== null) {
         clearInterval(taskyReminderInterval);
@@ -140,30 +269,32 @@ function initializeReminderEngine() {
     );
 
     if (enableButton) {
-        enableButton.addEventListener(
-            "click",
-            enableTaskyNotifications
-        );
+        enableButton.onclick = toggleTaskyNotifications;
     }
 
+    updateTaskyNotificationButton();
     checkTaskyReminders();
 
     taskyReminderInterval = setInterval(
         checkTaskyReminders,
         15000
     );
+}
+
+/* Recheck when Tasky becomes visible */
+document.addEventListener(
+    "visibilitychange",
+    () => {
+        if (!document.hidden) {
+            updateTaskyNotificationButton();
+            checkTaskyReminders();
+        }
     }
+);
 
-
-/* Recheck reminders when the user returns to Tasky */
-document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) {
-        checkTaskyReminders();
-    }
-});
-
-/* Recheck reminders when the browser window regains focus */
+/* Recheck when the window regains focus */
 window.addEventListener("focus", () => {
+    updateTaskyNotificationButton();
     checkTaskyReminders();
 });
-
+           
