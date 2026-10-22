@@ -1399,3 +1399,72 @@ body.light-theme .progress{
         transition: none;
     }
 }
+
+
+/* ======================================
+   FOCUS SESSIONS
+====================================== */
+
+.focus-timer-card {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.focus-timer-card label {
+    font-weight: 600;
+}
+
+.focus-timer-card select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 10px;
+    background: var(--card-bg, #ffffff);
+    color: var(--text-color, #111827);
+}
+
+.focus-timer {
+    margin: 20px 0 8px;
+    text-align: center;
+    font-size: clamp(3rem, 12vw, 5.5rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+}
+
+.focus-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.focus-controls button {
+    flex: 1 1 130px;
+    min-height: 44px;
+}
+
+#focusHistory {
+    padding-left: 20px;
+}
+
+#focusHistory li {
+    margin: 10px 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+    .focus-controls {
+        flex-direction: column;
+    }
+
+    .focus-controls button {
+        width: 100%;
+    }
+}
+
