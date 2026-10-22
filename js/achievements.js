@@ -1,30 +1,95 @@
-/* ===============================
-   achievements.js
-=============================== */
+
+/* ======================================
+   TASKY ACHIEVEMENTS
+====================================== */
+
+const TASKY_ACHIEVEMENT_COUNT_KEY = "tasky_lifetime_completed_v1";
+const TASKY_UNLOCKED_ACHIEVEMENTS_KEY = "tasky_unlocked_achievements_v1";
 
 const achievements = [
-
-{
-title:"First Task",
-goal:1
-},
-
-{
-title:"Task Master",
-goal:25
-},
-
-{
-title:"Productivity Pro",
-goal:100
-}
-
+    { id: "first-task", title: "First Task", goal: 1 },
+    { id: "task-master", title: "Task Master", goal: 25 },
+    { id: "productivity-pro", title: "Productivity Pro", goal: 100 }
 ];
 
-function updateAchievements(){
+function getAchievementCount() {
+    const value = Number(
+        localStorage.getItem(TASKY_ACHIEVEMENT_COUNT_KEY)
+    );
 
-console.log(
-"Achievements Updated"
-);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+}
 
+function getUnlockedAchievements() {
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem(TASKY_UNLOCKED_ACHIEVEMENTS_KEY) || "[]"
+        );
+
+        return new Set(Array.isArray(saved) ? saved : []);
+    } catch (error) {
+        console.error("Could not load achievements:", error);
+        return new Set();
+    }
+}
+
+/* Run once when Tasky starts */
+function initializeAchievements() {
+    if (localStorage.getItem(TASKY_ACHIEVEMENT_COUNT_KEY) === null) {
+        const existingCompleted = Array.isArray(tasks)
+            ? tasks.filter(task => task.completed).length
+            : 0;
+
+        localStorage.setItem(
+            TASKY_ACHIEVEMENT_COUNT_KEY,
+            String(existingCompleted)
+        );
+    }
+
+    updateAchievements(false);
+}
+
+/* Call only when a task changes from incomplete to complete */
+function recordTaskCompletion() {
+    const nextCount = getAchievementCount() + 1;
+
+    localStorage.setItem(
+        TASKY_ACHIEVEMENT_COUNT_KEY,
+        String(nextCount)
+    );
+
+    updateAchievements(true);
+}
+
+function updateAchievements(showUnlockToast = true) {
+    const count = getAchievementCount();
+    const unlocked = getUnlockedAchievements();
+    let changed = false;
+
+    achievements.forEach(achievement => {
+        if (count < achievement.goal || unlocked.has(achievement.id)) {
+            return;
+        }
+
+        unlocked.add(achievement.id);
+        changed = true;
+
+        if (showUnlockToast && typeof showToast === "function") {
+            showToast(`🏆 Achievement unlocked: ${achievement.title}!`);
+        }
+    });
+
+    if (changed) {
+        localStorage.setItem(
+            TASKY_UNLOCKED_ACHIEVEMENTS_KEY,
+            JSON.stringify([...unlocked])
+        );
+    }
+
+    return achievements.map(achievement => ({
+        ...achievement,
+        unlocked: unlocked.has(achievement.id),
+        progress: Math.min(count, achievement.goal),
+        total: count
+    }));
 }
