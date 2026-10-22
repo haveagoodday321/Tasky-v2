@@ -73,7 +73,109 @@ function updateAnalytics() {
         summary.textContent =
             `${completed} of ${total} tasks completed.`;
     }
+    
 
+    // ----------------------------------------
+    // Focus Session Analytics
+    // ----------------------------------------
+
+    let focusHistory = [];
+
+    try {
+        const savedFocusHistory = localStorage.getItem(
+            "tasky_focus_history_v1"
+        );
+
+        const parsedHistory = JSON.parse(
+            savedFocusHistory || "[]"
+        );
+
+        if (Array.isArray(parsedHistory)) {
+            focusHistory = parsedHistory;
+        }
+    } catch (error) {
+        console.error(
+            "Could not load focus analytics:",
+            error
+        );
+    }
+
+    // Count all valid saved focus-session minutes.
+    const totalFocusMinutes = focusHistory.reduce(
+        (total, session) => {
+            const minutes = Number(session.plannedMinutes);
+
+            return total + (
+                Number.isFinite(minutes) && minutes > 0
+                    ? minutes
+                    : 0
+            );
+        },
+        0
+    );
+
+    // Calculate focus time over the last seven calendar days.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const weekStart = new Date(today);
+    weekStart.setDate(weekStart.getDate() - 6);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const weeklyFocusMinutes = focusHistory.reduce(
+        (total, session) => {
+            const completedAt = new Date(session.completedAt);
+            const minutes = Number(session.plannedMinutes);
+
+            if (
+                !Number.isFinite(completedAt.getTime()) ||
+                !Number.isFinite(minutes) ||
+                minutes <= 0
+            ) {
+                return total;
+            }
+
+            if (
+                completedAt >= weekStart &&
+                completedAt < tomorrow
+            ) {
+                return total + minutes;
+            }
+
+            return total;
+        },
+        0
+    );
+
+    const focusTimeElement = document.getElementById(
+        "analyticsTotalFocusTime"
+    );
+
+    const focusSessionsElement = document.getElementById(
+        "analyticsFocusSessions"
+    );
+
+    const weeklyFocusElement = document.getElementById(
+        "analyticsWeeklyFocusTime"
+    );
+
+    if (focusTimeElement) {
+        focusTimeElement.textContent =
+            `${totalFocusMinutes} minutes`;
+    }
+
+    if (focusSessionsElement) {
+        focusSessionsElement.textContent =
+            focusHistory.length;
+    }
+
+    if (weeklyFocusElement) {
+        weeklyFocusElement.textContent =
+            `${weeklyFocusMinutes} minutes`;
+        }
+    
 
     // ----------------------------------------
     // Priority statistics
