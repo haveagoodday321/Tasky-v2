@@ -178,3 +178,84 @@ function renderAchievements() {
     });
 }
 
+
+function getTaskyLocalDate(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function calculateTaskyStreak() {
+    let dates = [];
+
+    try {
+        dates = JSON.parse(
+            localStorage.getItem("tasky_completion_dates_v1") || "[]"
+        );
+    } catch {
+        dates = [];
+    }
+
+    const completedDates = new Set(
+        Array.isArray(dates) ? dates : []
+    );
+
+    const today = new Date();
+    const todayKey = getTaskyLocalDate(today);
+
+    // A streak may continue if the last completed day was yesterday.
+    if (!completedDates.has(todayKey)) {
+        today.setDate(today.getDate() - 1);
+
+        if (!completedDates.has(getTaskyLocalDate(today))) {
+            return 0;
+        }
+    }
+
+    let streak = 0;
+    const cursor = new Date();
+
+    if (!completedDates.has(getTaskyLocalDate(cursor))) {
+        cursor.setDate(cursor.getDate() - 1);
+    }
+
+    while (completedDates.has(getTaskyLocalDate(cursor))) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+    }
+
+    return streak;
+}
+
+function renderProductivityStats() {
+    const totalXP =
+        Math.max(0, Number(localStorage.getItem("tasky_total_xp_v1")) || 0);
+
+    const level = Math.floor(totalXP / 100) + 1;
+    const xpIntoLevel = totalXP % 100;
+
+    const levelElement = document.getElementById("taskyLevel");
+    const xpElement = document.getElementById("taskyXP");
+    const bar = document.getElementById("xpProgressBar");
+    const track = document.getElementById("xpProgressTrack");
+    const label = document.getElementById("xpProgressLabel");
+    const streakElement = document.getElementById("streak");
+
+    if (levelElement) levelElement.textContent = level;
+    if (xpElement) xpElement.textContent = totalXP;
+
+    if (bar) bar.style.width = `${xpIntoLevel}%`;
+
+    if (track) {
+        track.setAttribute("aria-valuenow", String(xpIntoLevel));
+    }
+
+    if (label) {
+        label.textContent = `${xpIntoLevel} / 100 XP to next level`;
+    }
+
+    if (streakElement) {
+        const streak = calculateTaskyStreak();
+        streakElement.textContent =
+            `${streak} ${streak === 1 ? "Day" : "Days"}`;
+    }
+}
+
