@@ -59,6 +59,8 @@ function recordTaskCompletion() {
     );
 
     updateAchievements(true);
+
+   renderAchievements();
 }
 
 function updateAchievements(showUnlockToast = true) {
