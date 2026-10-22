@@ -2419,6 +2419,17 @@ task.subtasks =
 
         updateAnalytics();
 
+       
+        // Refresh the Smart Planner and Calendar.
+        if (typeof renderSmartPlanner === "function") {
+            renderSmartPlanner();
+        }
+
+        if (typeof buildCalendar === "function") {
+            buildCalendar();
+        }
+       
+
 
         showToast(
             "✅ Task updated!"
@@ -2463,6 +2474,17 @@ const newTask = createTask(
     updateDashboard();
 
     updateAnalytics();
+
+   
+        // Refresh the Smart Planner and Calendar.
+        if (typeof renderSmartPlanner === "function") {
+            renderSmartPlanner();
+        }
+
+        if (typeof buildCalendar === "function") {
+            buildCalendar();
+        }
+   
 
 
     showToast(
