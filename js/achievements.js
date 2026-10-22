@@ -93,3 +93,52 @@ function updateAchievements(showUnlockToast = true) {
         total: count
     }));
 }
+
+
+function renderAchievements() {
+    const list = document.getElementById("achievementsList");
+    const completedElement = document.getElementById(
+        "achievementCompletedCount"
+    );
+    const unlockedElement = document.getElementById(
+        "achievementUnlockedCount"
+    );
+
+    if (!list || !completedElement || !unlockedElement) return;
+
+    const count = getAchievementCount();
+    const results = updateAchievements(false);
+    const unlockedCount = results.filter(item => item.unlocked).length;
+
+    completedElement.textContent = count;
+    unlockedElement.textContent = `${unlockedCount}/${results.length}`;
+
+    list.replaceChildren();
+
+    results.forEach(achievement => {
+        const card = document.createElement("article");
+        card.className = achievement.unlocked
+            ? "achievement-card unlocked"
+            : "achievement-card locked";
+
+        const title = document.createElement("h3");
+        title.textContent = achievement.title;
+
+        const status = document.createElement("p");
+        status.textContent = achievement.unlocked
+            ? "Unlocked!"
+            : `${achievement.progress} / ${achievement.goal} tasks completed`;
+
+        const progress = document.createElement("progress");
+        progress.max = achievement.goal;
+        progress.value = achievement.progress;
+        progress.setAttribute(
+            "aria-label",
+            `${achievement.title} progress`
+        );
+
+        card.append(title, status, progress);
+        list.appendChild(card);
+    });
+}
+
