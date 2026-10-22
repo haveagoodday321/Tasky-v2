@@ -997,7 +997,7 @@ task.completed = !task.completed;
 // Count only a genuine transition to completed.
 if (!wasCompleted && task.completed &&
     typeof recordTaskCompletion === "function") {
-    recordTaskCompletion();
+    recordTaskCompletion(task);
 }
 
     task.completedAt = task.completed
