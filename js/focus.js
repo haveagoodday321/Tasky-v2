@@ -252,7 +252,8 @@ function finishFocusSession(completed = false) {
             taskName: task ? task.text : "Task",
             startedAt: focusSessionStartedAt,
             completedAt: new Date().toISOString(),
-            plannedMinutes: Math.round(initialDuration / 60)
+            plannedMinutes:
+    Number(document.getElementById("focusDuration")?.value) || 25
         });
 
         localStorage.setItem(FOCUS_HISTORY_KEY, JSON.stringify(history));
