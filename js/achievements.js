@@ -46,7 +46,8 @@ function initializeAchievements() {
         );
     }
 
-    updateAchievements(false);
+        updateAchievements(false);
+    renderAchievements();
 }
 
 /* Call only when a task changes from incomplete to complete */
