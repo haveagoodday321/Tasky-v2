@@ -955,7 +955,13 @@ function getNextRecurringDeadline(deadline, repeat, recurrenceDay = null) {
 
 
 /* Calculate the next reminder for a recurring task */
-function getNextRecurringReminder(reminderAt, repeat) {
+
+/* Calculate the next reminder for a recurring task */
+function getNextRecurringReminder(
+    reminderAt,
+    repeat,
+    recurrenceDay = null
+) {
     if (!reminderAt) return "";
 
     const current = new Date(reminderAt);
@@ -964,23 +970,27 @@ function getNextRecurringReminder(reminderAt, repeat) {
         return "";
     }
 
-    const originalDay = current.getDate();
+    const anchorDay = Number(recurrenceDay) || current.getDate();
 
     if (repeat === "daily") {
         current.setDate(current.getDate() + 1);
     } else if (repeat === "weekly") {
         current.setDate(current.getDate() + 7);
     } else if (repeat === "monthly") {
-        current.setDate(1);
-        current.setMonth(current.getMonth() + 1);
+        const targetYear = current.getFullYear() +
+            (current.getMonth() === 11 ? 1 : 0);
+        const targetMonth = (current.getMonth() + 1) % 12;
 
         const lastDay = new Date(
-            current.getFullYear(),
-            current.getMonth() + 1,
+            targetYear,
+            targetMonth + 1,
             0
         ).getDate();
 
-        current.setDate(Math.min(originalDay, lastDay));
+        current.setDate(1);
+        current.setFullYear(targetYear);
+        current.setMonth(targetMonth);
+        current.setDate(Math.min(anchorDay, lastDay));
     } else {
         return "";
     }
@@ -992,7 +1002,8 @@ function getNextRecurringReminder(reminderAt, repeat) {
         `-${pad(current.getDate())}T${pad(current.getHours())}` +
         `:${pad(current.getMinutes())}`
     );
-    }
+}
+
 
 
 function completeTask(id) {
@@ -1050,14 +1061,23 @@ const nextDeadline = getNextRecurringDeadline(
             })),
                         task.repeat,
             getNextRecurringReminder(
-                task.reminderAt,
-                task.repeat
-            )
+    task.reminderAt,
+    task.repeat,
+    task.reminderRecurrenceDay ||
+        (task.reminderAt
+            ? Number(task.reminderAt.slice(8, 10))
+            : null)
+)
         );
 
         // Link the new occurrence to the original task.
         nextTask.recurringFrom = task.id;
    nextTask.recurrenceDay = originalRecurrenceDay;
+   nextTask.reminderRecurrenceDay =
+    Number(task.reminderRecurrenceDay) ||
+    (task.reminderAt
+        ? Number(task.reminderAt.slice(8, 10))
+        : null);
 
         tasks.unshift(nextTask);
         task.nextOccurrenceCreated = true;
