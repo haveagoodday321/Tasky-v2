@@ -903,11 +903,16 @@ function setupTaskButtons() {
 
 
 /* Calculate the next recurring-task deadline */
-function getNextRecurringDeadline(deadline, repeat) {
+
+function getNextRecurringDeadline(deadline, repeat, recurrenceDay = null) {
     if (!deadline) return "";
 
     const parts = deadline.split("-").map(Number);
-    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+
+    if (
+        parts.length !== 3 ||
+        parts.some(Number.isNaN)
+    ) {
         return "";
     }
 
@@ -919,18 +924,23 @@ function getNextRecurringDeadline(deadline, repeat) {
     } else if (repeat === "weekly") {
         next.setDate(next.getDate() + 7);
     } else if (repeat === "monthly") {
-        // Preserve the day where possible; clamp to the
-        // final day of the next month when necessary.
-        const targetMonth = next.getMonth() + 1;
+        // Preserve the original intended day, even when a month
+        // is too short to contain it.
+        const anchorDay = Number(recurrenceDay) || day;
+        const targetYear = next.getFullYear() +
+            (next.getMonth() === 11 ? 1 : 0);
+        const targetMonth = (next.getMonth() + 1) % 12;
+
         const lastDay = new Date(
-            next.getFullYear(),
+            targetYear,
             targetMonth + 1,
             0
         ).getDate();
 
         next.setDate(1);
+        next.setFullYear(targetYear);
         next.setMonth(targetMonth);
-        next.setDate(Math.min(day, lastDay));
+        next.setDate(Math.min(anchorDay, lastDay));
     } else {
         return "";
     }
@@ -940,7 +950,8 @@ function getNextRecurringDeadline(deadline, repeat) {
     const dd = String(next.getDate()).padStart(2, "0");
 
     return `${yyyy}-${mm}-${dd}`;
-       }
+}
+
 
 
 /* Calculate the next reminder for a recurring task */
@@ -1012,10 +1023,17 @@ if (
     ["daily", "weekly", "monthly"].includes(task.repeat) &&
     !tasks.some(item => String(item.recurringFrom) === String(task.id))
 ) {
-        const nextDeadline = getNextRecurringDeadline(
-            task.deadline,
-            task.repeat
-        );
+        
+const originalRecurrenceDay =
+    Number(task.recurrenceDay) ||
+    (task.deadline ? Number(task.deadline.split("-")[2]) : null);
+
+const nextDeadline = getNextRecurringDeadline(
+    task.deadline,
+    task.repeat,
+    originalRecurrenceDay
+);
+   
 
         const nextTask = createTask(
             task.text,
@@ -1039,6 +1057,7 @@ if (
 
         // Link the new occurrence to the original task.
         nextTask.recurringFrom = task.id;
+   nextTask.recurrenceDay = originalRecurrenceDay;
 
         tasks.unshift(nextTask);
         task.nextOccurrenceCreated = true;
