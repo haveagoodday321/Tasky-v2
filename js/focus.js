@@ -258,6 +258,10 @@ function finishFocusSession(completed = false) {
 
         localStorage.setItem(FOCUS_HISTORY_KEY, JSON.stringify(history));
 
+       if (typeof updateAnalytics === "function") {
+    updateAnalytics();
+       }
+
         if (typeof showToast === "function") {
             showToast("🎯 Focus session completed!");
         }
