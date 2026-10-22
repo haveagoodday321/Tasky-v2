@@ -153,3 +153,17 @@ function initializeReminderEngine() {
         15000
     );
     }
+
+
+/* Recheck reminders when the user returns to Tasky */
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        checkTaskyReminders();
+    }
+});
+
+/* Recheck reminders when the browser window regains focus */
+window.addEventListener("focus", () => {
+    checkTaskyReminders();
+});
+
