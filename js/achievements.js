@@ -51,7 +51,13 @@ function initializeAchievements() {
 }
 
 /* Call only when a task changes from incomplete to complete */
-function recordTaskCompletion() {
+
+function recordTaskCompletion(task) {
+    if (!task || task.rewarded === true) return;
+
+    // Mark this task occurrence so toggling it cannot award XP twice.
+    task.rewarded = true;
+
     const nextCount = getAchievementCount() + 1;
 
     localStorage.setItem(
@@ -59,10 +65,37 @@ function recordTaskCompletion() {
         String(nextCount)
     );
 
-    updateAchievements(true);
+    const xpKey = "tasky_total_xp_v1";
+    const currentXP = Number(localStorage.getItem(xpKey)) || 0;
 
-   renderAchievements();
+    localStorage.setItem(xpKey, String(currentXP + 10));
+
+    const historyKey = "tasky_completion_dates_v1";
+    let dates = [];
+
+    try {
+        dates = JSON.parse(localStorage.getItem(historyKey) || "[]");
+        if (!Array.isArray(dates)) dates = [];
+    } catch {
+        dates = [];
+    }
+
+    // Use the device's local date, not the UTC date.
+    const now = new Date();
+    const today =
+        `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+    if (!dates.includes(today)) {
+        dates.push(today);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(dates));
+
+    updateAchievements(true);
+    renderAchievements();
+    renderProductivityStats();
 }
+
 
 function updateAchievements(showUnlockToast = true) {
     const count = getAchievementCount();
