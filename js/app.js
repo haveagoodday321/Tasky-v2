@@ -27,6 +27,10 @@ refreshApp();
 
    if (typeof initializeAchievements === "function") {
     initializeAchievements();
+
+      if (typeof renderProductivityStats === "function") {
+    renderProductivityStats();
+      }
    }
 
 initializeReminderEngine();
