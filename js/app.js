@@ -25,6 +25,10 @@ setupNavigation();
 
 refreshApp();
 
+   if (typeof initializeAchievements === "function") {
+    initializeAchievements();
+   }
+
 initializeReminderEngine();
    
 
