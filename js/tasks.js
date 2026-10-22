@@ -10,6 +10,7 @@
 ====================================== */
 
 let tasks = [];
+let isSavingTask = false;
 
 let currentSearch = "";
 let currentStatus = "all";
@@ -2280,6 +2281,14 @@ function closeTaskModal() {
 
 
     if (!modal) return;
+   isSavingTask = false;
+
+const saveButton = document.getElementById("saveTaskModalBtn");
+
+if (saveButton) {
+    saveButton.disabled = false;
+    saveButton.textContent = "Save Task";
+}
 
 
     modal.classList.remove("active");
@@ -2360,6 +2369,20 @@ const taskSubtasks =
 
     }
 
+   // Prevent repeated clicks from saving duplicate tasks.
+if (isSavingTask) {
+    return;
+}
+
+isSavingTask = true;
+
+const saveButton = document.getElementById("saveTaskModalBtn");
+
+if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+}
+
 
     /* EDIT EXISTING TASK */
 
@@ -2412,6 +2435,8 @@ task.subtasks =
     taskSubtasks;
 
         saveTasks();
+
+       closeTaskModal();
 
         renderTasks();
 
@@ -2468,6 +2493,8 @@ const newTask = createTask(
 
 
     saveTasks();
+
+   closeTaskModal();
 
     renderTasks();
 
