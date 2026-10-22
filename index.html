@@ -1096,7 +1096,75 @@ class="page">
 </div>
 
 </section>
+    
 
+<!-- FOCUS SESSIONS PAGE -->
+<section id="focusPage" class="page">
+
+    <div class="page-header">
+        <h2>🎯 Focus Sessions</h2>
+        <p>Choose a task, focus on the work, and track your progress.</p>
+    </div>
+
+    <div class="card focus-timer-card">
+        <label for="focusTaskSelect">Task to focus on</label>
+        <select id="focusTaskSelect">
+            <option value="">Choose a task</option>
+        </select>
+
+        <label for="focusDuration">Session length</label>
+        <select id="focusDuration">
+            <option value="15">15 minutes</option>
+            <option value="25" selected>25 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">60 minutes</option>
+        </select>
+
+        <div id="focusTimer" class="focus-timer" aria-live="polite">
+            25:00
+        </div>
+
+        <p id="focusStatus" role="status">
+            Ready when you are.
+        </p>
+
+        <div class="focus-controls">
+            <button id="focusStartBtn" class="primary-btn" type="button">
+                Start Focus
+            </button>
+
+            <button id="focusPauseBtn" class="secondary-btn" type="button" disabled>
+                Pause
+            </button>
+
+            <button id="focusFinishBtn" class="secondary-btn" type="button" disabled>
+                Finish Session
+            </button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <h3>Total Focus Time</h3>
+            <p id="totalFocusTime">0 minutes</p>
+        </div>
+
+        <div class="card stat-card">
+            <h3>Sessions Completed</h3>
+            <p id="completedFocusSessions">0</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Recent Focus Sessions</h3>
+        <ul id="focusHistory">
+            <li>No completed sessions yet.</li>
+        </ul>
+    </div>
+
+</section>
+    
     
 <!-- ACHIEVEMENTS PAGE -->
 <section id="achievementsPage" class="page">
@@ -1261,7 +1329,18 @@ aria-label="Main navigation">
         </span>
 
     </button>
+    
 
+<button
+    class="navBtn"
+    type="button"
+    data-page="focusPage">
+
+    <span class="nav-icon">🎯</span>
+    <span class="nav-label">Focus</span>
+
+</button>
+    
     
 <button
     class="navBtn"
