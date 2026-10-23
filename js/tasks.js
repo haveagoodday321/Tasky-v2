@@ -1150,6 +1150,14 @@ function deleteTask(id) {
     updateDashboard();
 
     updateAnalytics();
+// Keep the Smart Planner and Calendar in sync.
+if (typeof renderSmartPlanner === "function") {
+    renderSmartPlanner();
+}
+
+if (typeof buildCalendar === "function") {
+    buildCalendar();
+}
 
 
     showToast(
