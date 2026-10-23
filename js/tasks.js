@@ -1045,6 +1045,11 @@ if (
     ["daily", "weekly", "monthly"].includes(task.repeat) &&
     !tasks.some(item => String(item.recurringFrom) === String(task.id))
 ) {
+    if (!task.deadline) {
+        showToast(
+            "Add a deadline to this recurring task to schedule its next occurrence."
+        );
+    } else {
         
 const originalRecurrenceDay =
     Number(task.recurrenceDay) ||
@@ -1092,6 +1097,7 @@ const nextDeadline = getNextRecurringDeadline(
 
         tasks.unshift(nextTask);
         task.nextOccurrenceCreated = true;
+    }
     }
 
     
