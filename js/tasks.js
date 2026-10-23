@@ -913,6 +913,59 @@ function setupTaskButtons() {
 ====================================== */
 
 
+/* Keep recurrence settings consistent across a task series */
+function updateRecurringSeriesFrequency(
+    taskId,
+    repeat,
+    recurrenceDay = null,
+    reminderRecurrenceDay = null
+) {
+    const queue = [String(taskId)];
+    const visited = new Set(queue);
+
+    while (queue.length > 0) {
+        const parentId = queue.shift();
+
+        const children = tasks.filter(
+            item =>
+                String(item.recurringFrom) === parentId
+        );
+
+        children.forEach(child => {
+            const childId = String(child.id);
+
+            if (visited.has(childId)) {
+                return;
+            }
+
+            visited.add(childId);
+
+            child.repeat = repeat;
+
+            if (repeat === "monthly") {
+                child.recurrenceDay =
+                    recurrenceDay ||
+                    (
+                        child.deadline
+                            ? Number(child.deadline.split("-")[2])
+                            : null
+                    );
+
+                child.reminderRecurrenceDay =
+                    reminderRecurrenceDay ||
+                    (
+                        child.reminderAt
+                            ? Number(child.reminderAt.slice(8, 10))
+                            : null
+                    );
+            }
+
+            queue.push(childId);
+        });
+    }
+}
+
+
 /* Calculate the next recurring-task deadline */
 
 function getNextRecurringDeadline(deadline, repeat, recurrenceDay = null) {
@@ -2498,6 +2551,18 @@ if (
         ? Number(task.reminderAt.slice(8, 10))
         : null;
 }
+
+       
+// Update existing future occurrences when recurrence changes.
+if (previousRepeat !== task.repeat) {
+    updateRecurringSeriesFrequency(
+        task.id,
+        task.repeat,
+        task.recurrenceDay,
+        task.reminderRecurrenceDay
+    );
+}
+       
 
 task.tags =
     taskTags;
