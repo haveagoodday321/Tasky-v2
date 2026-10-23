@@ -2426,6 +2426,10 @@ if (saveButton) {
             return;
 
         }
+       // Preserve previous values to detect date changes.
+const previousDeadline = task.deadline;
+const previousReminderAt = task.reminderAt;
+const previousRepeat = task.repeat;
 
 
         task.text =
@@ -2450,6 +2454,30 @@ task.category =
     category.value || "Other";
 
        task.repeat = repeat.value || "none";
+       // Keep recurring dates aligned with intentional edits.
+if (
+    task.deadline !== previousDeadline ||
+    (
+        previousRepeat !== task.repeat &&
+        task.repeat === "monthly"
+    )
+) {
+    task.recurrenceDay = task.deadline
+        ? Number(task.deadline.split("-")[2])
+        : null;
+}
+
+if (
+    task.reminderAt !== previousReminderAt ||
+    (
+        previousRepeat !== task.repeat &&
+        task.repeat === "monthly"
+    )
+) {
+    task.reminderRecurrenceDay = task.reminderAt
+        ? Number(task.reminderAt.slice(8, 10))
+        : null;
+}
 
 task.tags =
     taskTags;
@@ -2484,7 +2512,6 @@ task.subtasks =
         );
 
 
-        closeTaskModal();
 
         return;
 
@@ -2541,8 +2568,6 @@ const newTask = createTask(
         "✅ Task created!"
     );
 
-
-    closeTaskModal();
 
 }
 
