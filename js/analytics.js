@@ -115,14 +115,14 @@ function updateAnalytics() {
     );
 
     // Calculate focus time over the last seven calendar days.
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const focusToday = new Date();
+focusToday.setHours(0, 0, 0, 0);
 
-    const weekStart = new Date(today);
-    weekStart.setDate(weekStart.getDate() - 6);
+const weekStart = new Date(focusToday);
+weekStart.setDate(weekStart.getDate() - 6);
 
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+const tomorrow = new Date(focusToday);
+tomorrow.setDate(tomorrow.getDate() + 1);
 
     const weeklyFocusMinutes = focusHistory.reduce(
         (total, session) => {
