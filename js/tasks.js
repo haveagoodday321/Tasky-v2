@@ -821,6 +821,16 @@ function toggleSubtask(
     updateDashboard();
 
     updateAnalytics();
+   
+    // Refresh views affected by subtask progress.
+    if (typeof renderSmartPlanner === "function") {
+        renderSmartPlanner();
+    }
+
+    if (typeof buildCalendar === "function") {
+        buildCalendar();
+    }
+   
 
 
     showToast(
