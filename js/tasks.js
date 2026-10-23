@@ -1917,6 +1917,14 @@ const subtasksList =
 
 
     if (!modal) return;
+   isSavingTask = false;
+
+const saveButton = document.getElementById("saveTaskModalBtn");
+
+if (saveButton) {
+    saveButton.disabled = false;
+    saveButton.textContent = "Save Task";
+}
 
 
     title.textContent =
@@ -1973,6 +1981,14 @@ function openEditTaskModal(id) {
 
 
     if (!task) return;
+   isSavingTask = false;
+
+const saveButton = document.getElementById("saveTaskModalBtn");
+
+if (saveButton) {
+    saveButton.disabled = false;
+    saveButton.textContent = "Save Task";
+}
 
 
     editingTaskId = task.id;
@@ -2281,7 +2297,6 @@ function closeTaskModal() {
 
 
     if (!modal) return;
-   isSavingTask = false;
 
 const saveButton = document.getElementById("saveTaskModalBtn");
 
