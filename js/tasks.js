@@ -2097,9 +2097,10 @@ if (Array.isArray(task.subtasks)) {
         subtask => {
 
             addSubtaskInput(
-                subtask.text || "",
-                subtask.completed || false
-            );
+    subtask.text || "",
+    subtask.completed === true,
+    subtask.id
+);
 
         }
     );
@@ -2129,7 +2130,8 @@ if (Array.isArray(task.subtasks)) {
 
 function addSubtaskInput(
     text = "",
-    completed = false
+    completed = false,
+    subtaskId = null
 ) {
 
     const list =
@@ -2145,6 +2147,9 @@ function addSubtaskInput(
 
     row.className =
         "subtask-row";
+
+   row.dataset.subtaskId = subtaskId || generateID();
+row.dataset.completed = String(completed);
 
 
     row.innerHTML = `
@@ -2189,31 +2194,30 @@ function addSubtaskInput(
 }
 
 
+
 function getSubtasksFromModal() {
-
-    const inputs =
-        document.querySelectorAll(
-            ".subtask-input"
-        );
-
+    const inputs = document.querySelectorAll(
+        ".subtask-input"
+    );
 
     return Array.from(inputs)
+        .map(input => {
+            const row = input.closest(".subtask-row");
+            const text = input.value.trim();
 
-        .map(input => ({
-            id: generateID(),
+            if (!text || !row) {
+                return null;
+            }
 
-            text:
-                input.value.trim(),
-
-            completed: false
-        }))
-
-        .filter(
-            subtask =>
-                subtask.text.length > 0
-        );
-
+            return {
+                id: row.dataset.subtaskId || generateID(),
+                text,
+                completed: row.dataset.completed === "true"
+            };
+        })
+        .filter(Boolean);
 }
+
 
 /* ======================================
    SUBTASK PROGRESS
