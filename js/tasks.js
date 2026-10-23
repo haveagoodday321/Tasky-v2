@@ -913,57 +913,85 @@ function setupTaskButtons() {
 ====================================== */
 
 
-/* Keep recurrence settings consistent across a task series */
+
+/* Update recurrence settings and reschedule future occurrences */
 function updateRecurringSeriesFrequency(
     taskId,
     repeat,
     recurrenceDay = null,
     reminderRecurrenceDay = null
 ) {
-    const queue = [String(taskId)];
-    const visited = new Set(queue);
+    const rootTask = tasks.find(
+        item => String(item.id) === String(taskId)
+    );
+
+    if (!rootTask) return;
+
+    const queue = [rootTask];
+    const visited = new Set([String(rootTask.id)]);
 
     while (queue.length > 0) {
-        const parentId = queue.shift();
+        const parent = queue.shift();
 
         const children = tasks.filter(
             item =>
-                String(item.recurringFrom) === parentId
+                String(item.recurringFrom) === String(parent.id)
         );
 
         children.forEach(child => {
             const childId = String(child.id);
 
-            if (visited.has(childId)) {
-                return;
-            }
+            if (visited.has(childId)) return;
 
             visited.add(childId);
-
             child.repeat = repeat;
 
-            if (repeat === "monthly") {
-                child.recurrenceDay =
-                    recurrenceDay ||
+            if (
+                ["daily", "weekly", "monthly"].includes(repeat)
+            ) {
+                const deadlineAnchor =
+                    Number(recurrenceDay) ||
+                    Number(parent.recurrenceDay) ||
                     (
-                        child.deadline
-                            ? Number(child.deadline.split("-")[2])
+                        parent.deadline
+                            ? Number(parent.deadline.split("-")[2])
                             : null
                     );
 
-                child.reminderRecurrenceDay =
-                    reminderRecurrenceDay ||
+                const reminderAnchor =
+                    Number(reminderRecurrenceDay) ||
+                    Number(parent.reminderRecurrenceDay) ||
                     (
-                        child.reminderAt
-                            ? Number(child.reminderAt.slice(8, 10))
+                        parent.reminderAt
+                            ? Number(parent.reminderAt.slice(8, 10))
                             : null
                     );
+
+                if (parent.deadline) {
+                    child.deadline = getNextRecurringDeadline(
+                        parent.deadline,
+                        repeat,
+                        deadlineAnchor
+                    );
+                }
+
+                if (parent.reminderAt) {
+                    child.reminderAt = getNextRecurringReminder(
+                        parent.reminderAt,
+                        repeat,
+                        reminderAnchor
+                    );
+                }
+
+                child.recurrenceDay = deadlineAnchor;
+                child.reminderRecurrenceDay = reminderAnchor;
             }
 
-            queue.push(childId);
+            queue.push(child);
         });
     }
-}
+       }
+
 
 
 /* Calculate the next recurring-task deadline */
