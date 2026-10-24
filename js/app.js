@@ -81,6 +81,15 @@ function setupNavigation() {
 
     });
 
+   
+    // Handle links inside the More page.
+    document.querySelectorAll(".more-link").forEach(link => {
+        link.addEventListener("click", () => {
+            showPage(link.dataset.page);
+        });
+    });
+   
+
 }
 
 
@@ -122,14 +131,26 @@ function showPage(pageId) {
 
     /* Update navigation */
 
+    
+    const morePages = [
+        "morePage",
+        "calendarPage",
+        "analyticsPage",
+        "achievementsPage",
+        "settingsPage"
+    ];
+
     buttons.forEach(button => {
+        const isMoreButton =
+            button.dataset.page === "morePage" &&
+            morePages.includes(pageId);
 
         button.classList.toggle(
             "active",
-            button.dataset.page === pageId
+            button.dataset.page === pageId || isMoreButton
         );
-
     });
+   
 
 
     /* Refresh the selected page */
