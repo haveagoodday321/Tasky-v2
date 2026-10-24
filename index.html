@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/premium.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/mobile-compact.css">
+    <link rel="stylesheet" href="css/concept-redesign.css">
 
 </head>
 
@@ -55,36 +56,21 @@ id="dashboardPage"
 class="page active">
 
 <div class="card welcome-card">
-
-<h2>
-
-👋 Welcome Back
-
-</h2>
-
-<p id="todayDate"></p>
-
+    <h2>Good to see you 👋</h2>
+    <p>Let's make today count!</p>
+    <p id="todayDate"></p>
 </div>
 
 <div class="card">
 
-<h3>
-
-🔥 Streak
-
-</h3>
-
-<h1 id="streak">
-
-0 Days
-
-</h1>
+<h3>🔥 Day Streak</h3>
+<h1 id="streak">0 Days</h1>
 
 </div>
 
     
 <div class="card productivity-level-card">
-    <h3>⚡ Your Progress</h3>
+    <h3>⚡ Level & XP</h3>
 
     <p>
         Level <strong id="taskyLevel">1</strong>
@@ -152,14 +138,8 @@ class="page active">
 
         <div>
 
-            <h3>
-                🧠 Tasky recommends
-            </h3>
-
-            <p>
-                Your best next tasks based on
-                deadlines, priority and workload.
-            </p>
+            <h3>✨ Your Next Best Tasks</h3>
+<p>Priority tasks based on deadlines and workload.</p>
 
         </div>
 
@@ -224,18 +204,18 @@ No upcoming deadlines.
 
 <h3>
 
-⚡ Quick Add Task
+＋ Quick Add
 
 </h3>
 
 <input
 id="quickTaskInput"
 type="text"
-placeholder="Enter a task...">
+placeholder="What do you need to do?">
 
 <button id="quickAddBtn">
 
-Add Task
+＋ Add Task.
 
 </button>
 
@@ -262,10 +242,10 @@ Tasks
     <div class="task-create-header">
 
         <div>
-            <h3>Create a Task</h3>
+            <h3>Create New Task</h3>
 
             <p>
-                Add something you need to get done.
+                Capture it now. Organise the details when you need them.
             </p>
         </div>
 
@@ -292,7 +272,7 @@ Tasks
     <input
     id="searchInput"
     type="text"
-    placeholder="🔍 Search tasks...">
+    placeholder="🔍 Search your tasks...">
 
 
     <div class="filter-row">
@@ -1325,7 +1305,7 @@ class="page">
 <section id="morePage" class="page">
     <div class="page-header">
         <h2>More</h2>
-        <p>Your tools, insights and preferences.</p>
+        <p>Your progress, tools and preferences.</p>
     </div>
 
     <div class="more-grid">
@@ -1333,7 +1313,7 @@ class="page">
             data-page="calendarPage">
             <span class="more-icon">▦</span>
             <strong>Calendar</strong>
-            <small>Deadlines and dates</small>
+            <small>See your productivity trends.</small>
         </button>
 
         <button class="more-link" type="button"
@@ -1347,14 +1327,14 @@ class="page">
             data-page="achievementsPage">
             <span class="more-icon">★</span>
             <strong>Achievements</strong>
-            <small>Your milestones</small>
+            <small>Badges and personal bests.</small>
         </button>
 
         <button class="more-link" type="button"
             data-page="settingsPage">
             <span class="more-icon">⚙</span>
             <strong>Settings</strong>
-            <small>Personalise Tasky</small>
+            <small>Make Tasky yours.</small>
         </button>
     </div>
 </section>
@@ -1374,7 +1354,7 @@ class="page">
 
     <button class="navBtn" type="button"
         data-page="tasksPage" aria-label="Tasks">
-        <span class="nav-icon">✓</span>
+        <span class="nav-icon">☑</span>
         <span class="nav-label">Tasks</span>
     </button>
 
@@ -1448,11 +1428,11 @@ class="page">
             <div>
 
                 <h2 id="taskModalTitle">
-                    Create Task
+                    Create New Task
                 </h2>
 
                 <p>
-                    Organise your task before you get started.
+                    Turn your plans into progress.
                 </p>
 
             </div>
@@ -1479,12 +1459,12 @@ class="page">
             <input
                 id="modalTaskInput"
                 type="text"
-                placeholder="e.g. Complete Mathematics homework"
+                placeholder="What do you need to get done?"
                 autocomplete="off">
 
 
             <label for="modalTaskDescription">
-                Description
+                Description (optional)
             </label>
 
             <textarea
