@@ -1656,6 +1656,20 @@ class="page">
     </div>
 
 </div>
+
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+            .catch(error => {
+                console.error(
+                    "Tasky offline support could not start:",
+                    error
+                );
+            });
+    });
+}
+</script>
     
 </body>
 </html>
