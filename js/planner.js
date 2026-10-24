@@ -1833,9 +1833,7 @@ function restoreBuildDayState() {
     }
 
 
-    const today =
-        new Date()
-            .toLocaleDateString("en-CA");
+    const today = getLocalDateKey();
 
 
     /*
