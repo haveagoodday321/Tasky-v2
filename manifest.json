@@ -1,1 +1,20 @@
 
+{
+  "id": "./",
+  "name": "Tasky — Productivity & Organisation",
+  "short_name": "Tasky",
+  "description": "Organise tasks, plan your day, build productive habits and track your progress.",
+  "lang": "en-ZA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "categories": [
+    "productivity",
+    "education",
+    "lifestyle"
+  ]
+}
+
