@@ -170,22 +170,69 @@ async function toggleTaskyNotifications() {
 }
 
 /* Display a reminder */
+
+/* Display a reminder using the best supported method. */
 function sendTaskyReminder(task) {
     const message = task.text
         ? `You have an outstanding task: ${task.text}`
         : "You have an outstanding task in Tasky.";
 
-    if (
+    const title = "Tasky Reminder";
+
+    const options = {
+        body: message,
+        tag: `tasky-${task.id}`
+    };
+
+    const permitted =
         areTaskyNotificationsEnabled() &&
         "Notification" in window &&
-        Notification.permission === "granted"
-    ) {
-        try {
-            new Notification("Tasky Reminder", {
-                body: message,
-                tag: `tasky-${task.id}`
+        Notification.permission === "granted";
+
+    if (permitted && "serviceWorker" in navigator) {
+        navigator.serviceWorker.ready
+            .then(registration => {
+                if (
+                    typeof registration.showNotification !==
+                    "function"
+                ) {
+                    throw new Error(
+                        "Service worker notifications are unsupported."
+                    );
+                }
+
+                return registration.showNotification(
+                    title,
+                    options
+                );
+            })
+            .catch(error => {
+                console.error(
+                    "Service worker notification failed:",
+                    error
+                );
+
+                // Fall back to the browser notification API.
+                try {
+                    new Notification(title, options);
+                } catch (fallbackError) {
+                    console.error(
+                        "Browser notification fallback failed:",
+                        fallbackError
+                    );
+
+                    if (typeof showToast === "function") {
+                        showToast(message);
+                    }
+                }
             });
 
+        return true;
+    }
+
+    if (permitted) {
+        try {
+            new Notification(title, options);
             return true;
         } catch (error) {
             console.error(
@@ -201,6 +248,7 @@ function sendTaskyReminder(task) {
 
     return false;
 }
+
 
 /* Check for due task reminders */
 function checkTaskyReminders() {
