@@ -1941,6 +1941,170 @@ totalTime.textContent =
 
 }
 
+/* ======================================
+   SYNC SAVED PLAN WITH TASK CHANGES
+====================================== */
+
+function syncSavedBuildDayPlanWithTasks() {
+    let plan;
+
+    try {
+        const saved = localStorage.getItem(
+            BUILD_DAY_STORAGE_KEY
+        );
+
+        if (!saved) return;
+
+        plan = JSON.parse(saved);
+    } catch (error) {
+        console.error(
+            "Could not read saved daily plan for syncing:",
+            error
+        );
+        return;
+    }
+
+    if (
+        !plan ||
+        !Array.isArray(plan.scheduleBlocks)
+    ) {
+        return;
+    }
+
+    const liveTasks = Array.isArray(tasks)
+        ? tasks
+        : [];
+
+    const tasksById = new Map(
+        liveTasks.map(task => [
+            String(task.id),
+            task
+        ])
+    );
+
+    let blocks = plan.scheduleBlocks
+        .filter(block =>
+            block && typeof block === "object"
+        )
+        .map(block => {
+            if (block.type !== "task") {
+                return { ...block };
+            }
+
+            const currentTask = tasksById.get(
+                String(block.taskId)
+            );
+
+            // A deleted task must not remain in the saved plan.
+            if (!currentTask) {
+                return null;
+            }
+
+            // Keep the schedule's chosen time, but use the
+            // task's current title.
+            return {
+                ...block,
+                title: currentTask.text
+            };
+        })
+        .filter(Boolean);
+
+    // Remove breaks that are no longer between two tasks.
+    blocks = blocks.filter((block, index, all) => {
+        if (block.type !== "break") {
+            return true;
+        }
+
+        const hasTaskBefore = all
+            .slice(0, index)
+            .some(item => item.type === "task");
+
+        const hasTaskAfter = all
+            .slice(index + 1)
+            .some(item => item.type === "task");
+
+        return hasTaskBefore && hasTaskAfter;
+    });
+
+    blocks.forEach((block, index) => {
+        block.order = index;
+    });
+
+    // Avoid writing to storage when nothing changed.
+    if (
+        JSON.stringify(blocks) ===
+        JSON.stringify(plan.scheduleBlocks)
+    ) {
+        return;
+    }
+
+    plan.scheduleBlocks = blocks;
+    plan.updatedAt = new Date().toISOString();
+
+    // If this is today's plan, refresh its visible schedule
+    // as well as its stored version.
+    if (
+        plan.date === getLocalDateKey() &&
+        document.getElementById("buildDaySchedule")
+    ) {
+        currentBuildDayBlocks = blocks.map(
+            block => ({ ...block })
+        );
+
+        const schedule = document.getElementById(
+            "buildDaySchedule"
+        );
+
+        const totalTime = document.getElementById(
+            "buildDayTotalTime"
+        );
+
+        if (blocks.length > 0) {
+            renderBuildDayBlocks();
+        } else {
+            schedule.innerHTML = `
+                <div class="build-day-empty">
+                    <div>📅</div>
+                    <p>
+                        No tasks remain in this schedule.
+                        Build a new plan when you're ready.
+                    </p>
+                </div>
+            `;
+
+            if (totalTime) {
+                totalTime.textContent = "No tasks scheduled";
+            }
+        }
+
+        if (saveBuildDayState()) {
+            const status = document.getElementById(
+                "buildDaySaveStatus"
+            );
+
+            if (status) {
+                status.textContent =
+                    "✓ Plan synced with task changes";
+            }
+        }
+
+        return;
+    }
+
+    // Preserve older saved plans as well, so Calendar can
+    // display their cleaned schedule blocks.
+    try {
+        localStorage.setItem(
+            BUILD_DAY_STORAGE_KEY,
+            JSON.stringify(plan)
+        );
+    } catch (error) {
+        console.error(
+            "Could not save the updated daily plan:",
+            error
+        );
+    }
+           }
 
 /* ======================================
    REBUILD DAILY PLAN
