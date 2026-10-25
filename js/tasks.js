@@ -250,6 +250,13 @@ function addTask() {
     updateDashboard();
 
     updateAnalytics();
+   if (typeof renderSmartPlanner === "function") {
+    renderSmartPlanner();
+}
+
+if (typeof buildCalendar === "function") {
+    buildCalendar();
+}
 
 
     showToast(
@@ -316,6 +323,13 @@ function quickAddTask() {
     updateDashboard();
 
     updateAnalytics();
+   if (typeof renderSmartPlanner === "function") {
+    renderSmartPlanner();
+}
+
+if (typeof buildCalendar === "function") {
+    buildCalendar();
+}
 
 
     showToast(
