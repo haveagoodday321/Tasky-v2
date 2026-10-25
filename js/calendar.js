@@ -420,15 +420,47 @@ function getScheduleBlocksForCalendarDate(dateString) {
             return [];
         }
 
-        return plan.scheduleBlocks
-            .filter(
-                block =>
-                    block.date === dateString
-            )
-            .sort(
-                (a, b) =>
-                    a.order - b.order
-            );
+const liveTasks = Array.isArray(tasks)
+    ? tasks
+    : [];
+
+const tasksById = new Map(
+    liveTasks.map(task => [
+        String(task.id),
+        task
+    ])
+);
+
+return plan.scheduleBlocks
+    .filter(
+        block =>
+            block &&
+            block.date === dateString
+    )
+    .filter(
+        block =>
+            block.type !== "task" ||
+            tasksById.has(String(block.taskId))
+    )
+    .map(block => {
+        if (block.type !== "task") {
+            return block;
+        }
+
+        const currentTask = tasksById.get(
+            String(block.taskId)
+        );
+
+        return {
+            ...block,
+            title: currentTask.text
+        };
+    })
+    .sort(
+        (a, b) =>
+            (Number(a.order) || 0) -
+            (Number(b.order) || 0)
+    );
 
     } catch (error) {
 
