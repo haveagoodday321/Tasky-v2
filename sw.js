@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "tasky-shell-v1";
+const CACHE_NAME = "tasky-shell-v2";
 
 const APP_SHELL = [
     "./",
@@ -83,4 +83,29 @@ self.addEventListener("fetch", event => {
         })
     );
 });
-                         
+
+
+/* Open Tasky when the user taps a reminder. */
+self.addEventListener("notificationclick", event => {
+    event.notification.close();
+
+    event.waitUntil(
+        (async () => {
+            const openClients = await clients.matchAll({
+                type: "window",
+                includeUncontrolled: true
+            });
+
+            for (const client of openClients) {
+                if ("focus" in client) {
+                    return client.focus();
+                }
+            }
+
+            if ("openWindow" in clients) {
+                return clients.openWindow("./");
+            }
+        })()
+    );
+});
+
