@@ -1255,6 +1255,11 @@ function deleteTask(id) {
 
 
     saveTasks();
+   if (
+    typeof syncSavedBuildDayPlanWithTasks === "function"
+) {
+    syncSavedBuildDayPlanWithTasks();
+   }
 
     renderTasks();
 
@@ -2613,6 +2618,11 @@ task.subtasks =
     taskSubtasks;
 
         saveTasks();
+       if (
+    typeof syncSavedBuildDayPlanWithTasks === "function"
+) {
+    syncSavedBuildDayPlanWithTasks();
+       }
 
        closeTaskModal();
 
