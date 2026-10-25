@@ -1112,7 +1112,43 @@ function buildMyDay() {
             maxTasksInput.value
         );
 
+    const validTimeFormat = value => {
+        if (!/^\d{2}:\d{2}$/.test(value)) {
+            return false;
+        }
 
+        const [hours, minutes] = value.split(":").map(Number);
+
+        return hours >= 0 &&
+            hours <= 23 &&
+            minutes >= 0 &&
+            minutes <= 59;
+    };
+
+    if (
+        !validTimeFormat(startInput.value) ||
+        !validTimeFormat(endInput.value) ||
+        !Number.isFinite(breakMinutes) ||
+        breakMinutes < 0 ||
+        !Number.isInteger(maxTasks) ||
+        maxTasks < 1
+    ) {
+        panel.style.display = "block";
+
+        schedule.innerHTML = `
+            <div class="build-day-empty">
+                <div>⚠️</div>
+                <p>
+                    Please enter valid planning settings.
+                    Break duration cannot be negative, and
+                    maximum tasks must be at least 1.
+                </p>
+            </div>
+        `;
+
+        totalTime.textContent = "Invalid settings";
+        return;
+    }
     /* ==================================
        VALIDATE TIME
     ================================== */
