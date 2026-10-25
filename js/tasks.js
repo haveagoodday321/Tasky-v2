@@ -2499,6 +2499,69 @@ const taskTags =
 
 const taskSubtasks =
     getSubtasksFromModal();
+   /* Validate task details before saving. */
+
+const reminderInput =
+    document.getElementById("modalReminderAt");
+
+const reminderValue =
+    reminderInput ? reminderInput.value : "";
+
+const durationValue = Number(duration.value);
+
+const validDate = value => {
+    if (!value) return true;
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return false;
+    }
+
+    const [year, month, day] =
+        value.split("-").map(Number);
+
+    const parsed = new Date(year, month - 1, day);
+
+    return parsed.getFullYear() === year &&
+        parsed.getMonth() === month - 1 &&
+        parsed.getDate() === day;
+};
+
+if (!validDate(deadline.value)) {
+    showToast("Please enter a valid deadline.");
+    deadline.focus();
+    return;
+}
+
+if (
+    !Number.isFinite(durationValue) ||
+    durationValue < 1 ||
+    durationValue > 1440
+) {
+    showToast(
+        "Task duration must be between 1 and 1440 minutes."
+    );
+    duration.focus();
+    return;
+}
+
+if (
+    reminderValue &&
+    !Number.isFinite(Date.parse(reminderValue))
+) {
+    showToast("Please enter a valid reminder date and time.");
+    reminderInput.focus();
+    return;
+}
+
+if (
+    taskSubtasks.length > 50 ||
+    taskSubtasks.some(subtask => subtask.text.length > 300)
+) {
+    showToast(
+        "A task can have up to 50 subtasks, each with a maximum of 300 characters."
+    );
+    return;
+}
 
     if (!text) {
 
