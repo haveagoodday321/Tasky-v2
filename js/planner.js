@@ -50,34 +50,51 @@ function plannerStartOfDay(date = new Date()) {
 }
 
 
-function plannerDaysUntil(
-    deadline
-) {
 
+function plannerDaysUntil(deadline) {
     if (!deadline) {
-
         return null;
-
     }
 
+    const today = plannerStartOfDay();
+    let parsedDate;
 
-    const today =
-        plannerStartOfDay();
-
-    const target =
-        plannerStartOfDay(
-            new Date(deadline)
-        );
-
-
-    return Math.round(
-        (
-            target - today
-        ) /
-        (1000 * 60 * 60 * 24)
+    // Parse date-only values in local time.
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(
+        String(deadline)
     );
 
+    if (match) {
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+
+        parsedDate = new Date(year, month - 1, day);
+
+        // Reject invalid dates rather than scoring them.
+        if (
+            parsedDate.getFullYear() !== year ||
+            parsedDate.getMonth() !== month - 1 ||
+            parsedDate.getDate() !== day
+        ) {
+            return null;
+        }
+    } else {
+        parsedDate = new Date(deadline);
+
+        if (!Number.isFinite(parsedDate.getTime())) {
+            return null;
+        }
+    }
+
+    const target = plannerStartOfDay(parsedDate);
+
+    return Math.round(
+        (target.getTime() - today.getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
 }
+
 
 
 /* ======================================
