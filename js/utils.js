@@ -32,3 +32,28 @@ function randomItem(array) {
     ];
 
 }
+
+
+/**
+ * Returns a local calendar date as YYYY-MM-DD.
+ * Returns an empty string for an invalid date.
+ */
+function getLocalDateKey(date = new Date()) {
+    const parsed = date instanceof Date
+        ? date
+        : new Date(date);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return "";
+    }
+
+    const year = parsed.getFullYear();
+    const month = String(
+        parsed.getMonth() + 1
+    ).padStart(2, "0");
+    const day = String(
+        parsed.getDate()
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
