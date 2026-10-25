@@ -38,31 +38,101 @@ function saveFocusState() {
     localStorage.setItem(FOCUS_STATE_KEY, JSON.stringify(state));
 }
 
+
 function restoreFocusState() {
     try {
-        const state = JSON.parse(
-            localStorage.getItem(FOCUS_STATE_KEY) || "null"
-        );
+        const raw = localStorage.getItem(FOCUS_STATE_KEY);
 
-        if (!state) return;
+        if (!raw) return;
 
-        focusRemaining = Math.max(0, Number(state.remaining) || 0);
-        focusSelectedTaskId = state.taskId || "";
-        focusSessionStartedAt = state.startedAt || null;
-        focusPaused = Boolean(state.paused);
-        focusRunning = Boolean(state.running);
-        focusEndTime = state.endTime || null;
+        const state = JSON.parse(raw);
 
-        if (focusRunning && focusEndTime) {
+        const remaining = Number(state?.remaining);
+        const running = state?.running === true;
+        const paused = state?.paused === true;
+
+        const validRemaining =
+            Number.isFinite(remaining) &&
+            remaining >= 0 &&
+            remaining <= 180 * 60;
+
+        const validStart =
+            typeof state?.startedAt === "string" &&
+            Number.isFinite(
+                new Date(state.startedAt).getTime()
+            );
+
+        const endTime = Number(state?.endTime);
+
+        const validEnd =
+            Number.isFinite(endTime) &&
+            endTime > 0;
+
+        const validState =
+            state &&
+            typeof state === "object" &&
+            validRemaining &&
+            validStart &&
+            running !== paused &&
+            (!running || validEnd);
+
+        if (!validState) {
+            localStorage.removeItem(FOCUS_STATE_KEY);
+
+            focusRemaining = 25 * 60;
+            focusRunning = false;
+            focusPaused = false;
+            focusEndTime = null;
+            focusSelectedTaskId = "";
+            focusSessionStartedAt = null;
+
+            return;
+        }
+
+        focusRemaining = remaining;
+        focusSelectedTaskId =
+            typeof state.taskId === "string" ||
+            typeof state.taskId === "number"
+                ? String(state.taskId)
+                : "";
+
+        focusSessionStartedAt = state.startedAt;
+        focusRunning = running;
+        focusPaused = paused;
+        focusEndTime = running ? endTime : null;
+
+        if (focusRunning) {
             focusRemaining = Math.max(
                 0,
-                Math.ceil((focusEndTime - Date.now()) / 1000)
+                Math.ceil(
+                    (focusEndTime - Date.now()) / 1000
+                )
             );
         }
     } catch (error) {
-        console.error("Could not restore focus session:", error);
+        console.error(
+            "Could not restore focus session:",
+            error
+        );
+
+        focusRemaining = 25 * 60;
+        focusRunning = false;
+        focusPaused = false;
+        focusEndTime = null;
+        focusSelectedTaskId = "";
+        focusSessionStartedAt = null;
+
+        try {
+            localStorage.removeItem(FOCUS_STATE_KEY);
+        } catch (cleanupError) {
+            console.error(
+                "Could not clear invalid focus state:",
+                cleanupError
+            );
+        }
     }
 }
+
 
 function populateFocusTasks() {
     const select = document.getElementById("focusTaskSelect");
